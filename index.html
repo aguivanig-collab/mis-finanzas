@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mis finanzas</title>
+<meta name="theme-color" content="#1d4ed8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Finanzas">
+<style>
+  html, body { margin: 0; height: 100%; background: #f6f7f9; }
+  @media (prefers-color-scheme: dark) { html, body { background: #0b1020; } }
+  iframe { border: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<!--
+  Puente a la app de Apps Script («Mis finanzas»). Abrir el link de
+  script.google.com en un celular con varias cuentas de Google lo rompe
+  (Chrome le mete /u/3/ y aparece «No se pudo abrir el archivo»).
+  Metida acá adentro, la app no pasa por las cuentas de Google: entra
+  con su propio mail y contraseña. Acá no hay datos ni contraseñas.
+-->
+<iframe src="https://script.google.com/macros/s/AKfycbwtrkhHgaj0NSuAYKI57UKXVWFXGeRWRL6FOIf4CJxQfmsxc7wDoQa7qnvhOFS9FR82IQ/exec"
+        title="Mis finanzas" allow="clipboard-write"></iframe>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>

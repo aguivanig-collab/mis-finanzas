@@ -232,7 +232,7 @@ body.enInicio nav{display:none}
       <button class="ir" data-ir="fijos"><span class="ico">⟳</span><span><b>Fijos</b><small>gastos e ingresos de todos los meses</small></span></button>
       <button class="ir" data-ir="mov"><span class="ico">↕</span><span><b>Movimientos</b><small>gastos e ingresos sin tarjeta</small></span></button>
       <button class="ir" data-ir="ahorro"><span class="ico">◈</span><span><b>Ahorro</b><small>tus fondos</small></span></button>
-      <button class="ir" data-ir="ultimas"><span class="ico">≡</span><span><b>Últimas compras</b><small>para revisar o anular</small></span></button>
+      <button class="ir" data-ir="ultimas"><span class="ico">≡</span><span><b>Compras cargadas</b><small>buscar, cambiar de quién es o anular</small></span></button>
     </div>
   </section>
 
@@ -433,8 +433,11 @@ body.enInicio nav{display:none}
 
   <!-- ══ ÚLTIMAS ══ -->
   <section id="p-ultimas" class="oculto">
-    <h1>Últimas compras</h1>
-    <p class="sub">Para revisar lo que anotaste desde el celular.</p>
+    <h1>Compras cargadas</h1>
+    <p class="sub">Revisá, cambiá de quién es o anulá. Para una compra vieja, buscala.</p>
+    <div class="card" style="padding:12px 16px">
+      <input id="uBuscar" type="search" placeholder="Buscar: cocina, súper, Naranja…" autocomplete="off" enterkeyhint="search">
+    </div>
     <div class="card" id="ultimasBody"><div class="cargando">Cargando…</div></div>
   </section>
 
@@ -1684,23 +1687,50 @@ function guardarNuevo(tipo){
 }
 
 // ── Últimas compras ──
+// Sin búsqueda: las últimas 20. Con búsqueda: hasta 50 de todas las compras.
+var tBuscar = null;
+$('uBuscar').addEventListener('input', function(){
+  clearTimeout(tBuscar);
+  tBuscar = setTimeout(cargarUltimas, 450);
+});
+
 function cargarUltimas(){
-  $('ultimasBody').innerHTML = '<div class="cargando">Cargando…</div>';
+  var q = $('uBuscar').value.trim();
+  $('ultimasBody').innerHTML = '<div class="cargando">' + (q ? 'Buscando…' : 'Cargando…') + '</div>';
   servidor().withSuccessHandler(function(cs){
-    if (!cs.length){ $('ultimasBody').innerHTML = '<div class="vacio">Todavía no hay compras.</div>'; return; }
+    if (q !== $('uBuscar').value.trim()) return;   // llegó una búsqueda vieja
+    if (!cs.length){
+      $('ultimasBody').innerHTML = '<div class="vacio">' + (q ? 'No encontré compras con «' + esc(q) + '».' : 'Todavía no hay compras.') + '</div>';
+      return;
+    }
+    var otro = YO === 'LUCÍA' ? 'IVÁN' : 'LUCÍA';
     $('ultimasBody').innerHTML = cs.map(function(c){
       var anul = c.estado === 'ANULADA';
-      var tag = c.deQuien === 'COMPARTIDO' ? '<span class="chip" style="color:var(--acento)">compartido</span>'
-              : (c.deQuien !== YO ? '<span class="chip">de ' + nombrePersona(c.deQuien) + '</span>' : '');
+      var opc = [[YO, 'Mío'], ['COMPARTIDO', 'Compartido'], [otro, 'De ' + nombrePersona(otro)]].map(function(o){
+        return '<option value="' + o[0] + '"' + (c.deQuien === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+      }).join('');
       return '<div class="item' + (anul ? ' anulada' : '') + '">'
-        + '<div class="t"><span>' + c.descripcion + tag + '</span><span>' + plata(c.importe, c.moneda) + '</span></div>'
-        + '<div class="d">' + c.fecha + ' · ' + c.tarjeta
+        + '<div class="t"><span>' + esc(c.descripcion) + '</span><span>' + plata(c.importe, c.moneda) + '</span></div>'
+        + '<div class="d">' + c.fecha + ' · ' + esc(c.tarjeta)
         + (c.cuotas > 1 ? ' · ' + c.cuotas + ' cuotas de ' + plata(c.porCuota, c.moneda) : ' · 1 pago')
         + ' · desde ' + c.primera + '</div>'
-        + (anul ? '' : '<button class="sec" onclick="anular(\'' + c.id + '\')">Anular</button>')
+        + (anul ? '' :
+            '<div class="acciones" style="align-items:center">'
+          +   '<select style="flex:1;padding:9px 10px;font-size:14px" aria-label="De quién es" '
+          +     'onchange="cambiarDeQuien(\'' + c.id + '\', this)">' + opc + '</select>'
+          +   '<button class="sec" style="flex:0 0 auto;width:auto;margin:0" onclick="anular(\'' + c.id + '\')">Anular</button>'
+          + '</div>')
         + '</div>';
     }).join('');
-  }).getUltimasCompras(12);
+  }).getUltimasCompras(q ? 50 : 20, q);
+}
+
+function cambiarDeQuien(id, sel){
+  sel.disabled = true;
+  servidor()
+    .withSuccessHandler(function(r){ sel.disabled = false; toast(r.mensaje); })
+    .withFailureHandler(function(e){ sel.disabled = false; toast('No se pudo: ' + e.message); cargarUltimas(); })
+    .cambiarDeQuienCompra(id, sel.value);
 }
 
 function anular(id){

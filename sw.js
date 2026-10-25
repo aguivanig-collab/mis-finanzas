@@ -1,7 +1,7 @@
-// Guarda el marco de la app (esta página, el manifiesto y los íconos) para
-// que abra al instante. La app de adentro (script.google.com) no se toca:
-// siempre se pide en vivo.
-var CACHE = 'mis-finanzas-v1';
+// Guarda la pantalla (index.html, manifiesto e íconos) para que abra al
+// instante. Los datos no: se piden siempre en vivo al servidor de Apps
+// Script (otro origen, este service worker no lo toca).
+var CACHE = 'mis-finanzas-v2';
 var MARCO = ['./', 'index.html', 'manifest.webmanifest', 'icono-192.png', 'icono-512.png'];
 
 self.addEventListener('install', function (e) {

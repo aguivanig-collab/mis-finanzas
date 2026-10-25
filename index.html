@@ -1,33 +1,1846 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
 <title>Mis finanzas</title>
-<meta name="theme-color" content="#1d4ed8">
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --texto:#111827; --suave:#6b7280; --linea:#e5e7eb;
+  --verde:#15803d; --rojo:#b91c1c; --ambar:#b45309; --acento:#1d4ed8; --acentoSuave:#eff6ff;
+  --radio:14px; --sombra:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0b1020;--card:#151b2e;--texto:#e8eaf0;--suave:#98a2b3;--linea:#252d44;
+        --verde:#4ade80;--rojo:#f87171;--ambar:#fbbf24;--acento:#7aa2ff;--acentoSuave:#182240;
+        --sombra:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.35);}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--texto);
+  font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding-bottom:84px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+h1{font-size:19px;margin:0 0 2px}
+.sub{color:var(--suave);font-size:13px;margin:0 0 16px}
+
+.card{background:var(--card);border-radius:var(--radio);box-shadow:var(--sombra);
+  padding:16px;margin-bottom:12px}
+.card h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--suave);margin:0 0 12px;font-weight:600}
+
+.hero{text-align:center;padding:22px 16px}
+.hero .etq{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--suave)}
+.hero .num{font-size:40px;font-weight:700;letter-spacing:-.02em;margin:6px 0 2px;
+  font-variant-numeric:tabular-nums}
+.hero .pie{font-size:13px;color:var(--suave)}
+.pos{color:var(--verde)} .neg{color:var(--rojo)} .ojo{color:var(--ambar)}
+.duo{display:grid;grid-template-columns:1fr;gap:0}
+.duo>div{text-align:center;padding:18px 16px}
+.duo>div+div{border-top:1px solid var(--linea)}
+.duo .etq{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--suave)}
+.duo .num{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:5px 0 2px;
+  font-variant-numeric:tabular-nums}
+.duo .pie{font-size:13px;color:var(--suave)}
+@media(min-width:760px){
+  .duo{grid-template-columns:1fr 1fr}
+  .duo>div+div{border-top:0;border-left:1px solid var(--linea)}
+  .duo .num{font-size:42px}
+}
+
+.par{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:9px 0;border-bottom:1px solid var(--linea)}
+.par:last-child{border-bottom:0}
+.par .k{color:var(--suave);font-size:14px;min-width:0}
+.par .v{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.par .k small,.fila small{display:block;font-size:11.5px;opacity:.75}
+
+.tabla{width:100%;border-collapse:collapse;font-size:14px}
+.tabla th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--suave);
+  text-align:right;font-weight:600;padding:0 0 8px}
+.tabla th:first-child{text-align:left}
+.tabla td{padding:8px 0;border-top:1px solid var(--linea);text-align:right;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.tabla td:first-child{text-align:left;white-space:normal}
+.scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+label{display:block;font-size:13px;color:var(--suave);margin:12px 0 5px;font-weight:500}
+input,select,textarea{width:100%;padding:12px;font-size:16px;font-family:inherit;
+  border:1px solid var(--linea);border-radius:10px;background:var(--card);color:var(--texto)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acento);outline-offset:-1px;border-color:transparent}
+.fila2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{width:100%;padding:14px;font-size:16px;font-weight:600;font-family:inherit;
+  border:0;border-radius:10px;background:var(--acento);color:#fff;margin-top:18px}
+button:disabled{opacity:.55}
+button.sec{background:transparent;color:var(--acento);border:1px solid var(--linea);margin-top:8px;font-size:14px;padding:10px}
+
+.aviso{background:var(--acentoSuave);border-radius:10px;padding:11px 13px;margin-top:14px;
+  font-size:13.5px;line-height:1.4}
+.aviso b{font-weight:600}
+.alerta{background:rgba(185,28,28,.1);color:var(--rojo)}
+.ojito{background:rgba(180,83,9,.12);color:var(--ambar)}
+
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);
+  border-top:1px solid var(--linea);display:flex;
+  padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav button{flex:1;width:auto;background:none;color:var(--suave);border:0;margin:0;padding:10px 2px 9px;
+  font-size:10.5px;font-weight:600;border-radius:0;line-height:1.3}
+nav button.on{color:var(--acento)}
+nav .ico{display:block;font-size:19px;margin-bottom:1px}
+
+.oculto{display:none}
+body.sinSesion nav, body.sinSesion #app{display:none}
+body.enInicio nav{display:none}
+
+/* ── Inicio: la botonera ── */
+.botonera{display:flex;flex-direction:column;gap:10px;max-width:560px}
+.botonera .ir{display:flex;align-items:center;gap:14px;margin:0;padding:16px 18px;text-align:left;
+  background:var(--card);color:var(--texto);border:1px solid var(--linea);border-radius:var(--radio);
+  box-shadow:var(--sombra);font-weight:400}
+.botonera .ir .ico{font-size:22px;width:28px;text-align:center;color:var(--acento);flex:0 0 auto}
+.botonera .ir b{display:block;font-size:17px;font-weight:600}
+.botonera .ir small{display:block;font-size:13px;color:var(--suave);margin-top:1px}
+.botonera .ir:active{transform:scale(.99)}
+.botonera .ir.principal{background:var(--acento);color:#fff;border-color:transparent;padding:22px 18px}
+.botonera .ir.principal .ico{color:#fff;font-size:26px}
+.botonera .ir.principal b{font-size:19px}
+.botonera .ir.principal small{color:rgba(255,255,255,.8)}
+.vacio{color:var(--suave);font-size:14px;text-align:center;padding:26px 8px}
+.cargando{text-align:center;color:var(--suave);padding:34px;font-size:14px}
+.item{padding:11px 0;border-bottom:1px solid var(--linea)}
+.item:last-child{border-bottom:0}
+.item .t{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.item .d{font-size:12.5px;color:var(--suave);margin-top:2px}
+.anulada{opacity:.45;text-decoration:line-through}
+
+/* ── Planificador ── */
+.plan .fila{display:grid;grid-template-columns:1fr 128px;gap:8px;align-items:center;
+  padding:5px 0;border-bottom:1px solid var(--linea)}
+.plan .fila:last-child{border-bottom:0}
+.plan .fila input{padding:9px 10px;font-size:15px}
+.plan .fila input.nom{font-weight:500}
+.plan .fila input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+.plan .sec{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--suave);
+  font-weight:600;margin:16px 0 6px}
+.plan .sec:first-child{margin-top:0}
+.resto{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  margin-top:14px;padding-top:13px;border-top:2px solid var(--linea)}
+.resto .k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--suave);font-weight:600}
+.resto .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.bloqueada{opacity:.6}
+
+/* ── Escritorio ── */
+@media (min-width:900px){
+  body{padding-bottom:0}
+  .wrap{max-width:1120px;padding:24px 24px 48px}
+  h1{font-size:24px}
+  nav{position:sticky;top:0;bottom:auto;left:auto;right:auto;
+      max-width:1120px;margin:0 auto;padding:0 24px;
+      border-top:0;border-bottom:1px solid var(--linea);background:var(--bg)}
+  nav button{flex:0 0 auto;width:auto;padding:14px 20px;font-size:14px;border-bottom:2px solid transparent}
+  nav button.on{border-bottom-color:var(--acento);background:none}
+  nav .ico{display:inline;font-size:15px;margin:0 7px 0 0}
+  .dosCol{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+          gap:16px;align-items:start}
+  .hero .num{font-size:52px}
+  .card{padding:20px}
+  #p-compra .card,#p-mov .card,#p-ahorro .card{max-width:620px}
+}
+.acciones{display:flex;gap:8px;margin-top:8px}
+.acciones button{flex:1;margin-top:0}
+.panel{background:var(--acentoSuave);border-radius:10px;padding:13px;margin-top:10px}
+.panel label:first-child{margin-top:0}
+.item.viejo{opacity:.5}
+.suave{color:var(--suave)}
+.lin{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:8px 0;border-bottom:1px solid var(--linea)}
+.lin:last-of-type{border-bottom:0}
+.lin .izq{min-width:0}
+.lin .nom{font-size:14.5px}
+.lin .sub2{font-size:11.5px;color:var(--suave);margin-top:2px}
+.lin .der{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lin .der small{display:block;font-size:11.5px;color:var(--acento);margin-top:2px}
+.subtot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--linea);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.subtot span:first-child{font-weight:400;color:var(--suave);font-size:13px}
+.chip{display:inline-block;font-size:10px;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--ambar);border:1px solid currentColor;border-radius:999px;padding:0 5px;
+  margin-left:5px;vertical-align:1px}
+.repFila{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 0}
+.repFila input[type=number]{width:118px;text-align:right;margin:0}
+.repFila input.nomServ{flex:1;min-width:0;margin:0}
+.grupoRep{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  font-weight:600;margin:14px 0 4px}
+.cotizCaja{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;
+  background:var(--acentoSuave);border-radius:9px;padding:10px 12px;margin-bottom:10px;font-size:13px}
+.cotizCaja b{font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:16px;right:16px;bottom:78px;background:var(--texto);color:var(--bg);
+  padding:13px 16px;border-radius:10px;font-size:14px;z-index:20;box-shadow:var(--sombra)}
+</style>
+<!-- GENERADO por mis-finanzas/armar-pwa.js a partir de Index.html: no editar a mano. -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icono-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Finanzas">
-<style>
-  html, body { margin: 0; height: 100%; background: #f6f7f9; }
-  @media (prefers-color-scheme: dark) { html, body { background: #0b1020; } }
-  iframe { border: 0; width: 100%; height: 100%; display: block; }
-</style>
 </head>
-<body>
-<!--
-  Puente a la app de Apps Script («Mis finanzas»). Abrir el link de
-  script.google.com en un celular con varias cuentas de Google lo rompe
-  (Chrome le mete /u/3/ y aparece «No se pudo abrir el archivo»).
-  Metida acá adentro, la app no pasa por las cuentas de Google: entra
-  con su propio mail y contraseña. Acá no hay datos ni contraseñas.
--->
-<iframe src="https://script.google.com/macros/s/AKfycbwtrkhHgaj0NSuAYKI57UKXVWFXGeRWRL6FOIf4CJxQfmsxc7wDoQa7qnvhOFS9FR82IQ/exec"
-        title="Mis finanzas" allow="clipboard-write"></iframe>
+<body class="sinSesion">
+
+<nav>
+  <button data-p="inicio"><span class="ico">⌂</span>Inicio</button>
+  <button data-p="compra"><span class="ico">＋</span>Compra</button>
+  <button data-p="resumen"><span class="ico">◧</span>Resumen</button>
+  <button data-p="fijos"><span class="ico">⟳</span>Fijos</button>
+  <button data-p="mov"><span class="ico">↕</span>Movim.</button>
+  <button data-p="ahorro"><span class="ico">◈</span>Ahorro</button>
+  <button data-p="ultimas"><span class="ico">≡</span>Últimas</button>
+</nav>
+
+<!-- ══ ENTRAR ══ -->
+<div id="login" class="oculto">
+  <div class="wrap" style="max-width:420px;padding-top:10vh">
+    <div class="card">
+      <h1>Mis finanzas</h1>
+      <p class="sub">Iván y Lucía</p>
+      <form id="fLogin" autocomplete="on">
+        <label for="lMail">Mail</label>
+        <input id="lMail" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="off" spellcheck="false">
+        <label for="lClave">Contraseña</label>
+        <input id="lClave" name="password" type="password" autocomplete="current-password">
+        <div id="lRepetirCaja" class="oculto">
+          <label for="lClave2">Repetí la contraseña</label>
+          <input id="lClave2" type="password" autocomplete="new-password">
+        </div>
+        <div class="aviso oculto" id="lAviso"></div>
+        <button type="submit" id="lBoton">Entrar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="app">
+  <div id="quien" class="sub" style="text-align:right;margin:0 0 6px"></div>
+
+  <!-- ══ INICIO: la botonera ══ -->
+  <section id="p-inicio">
+    <h1>Mis finanzas</h1>
+    <p class="sub">¿Qué querés hacer?</p>
+    <div class="botonera">
+      <button class="ir principal" data-ir="compra"><span class="ico">＋</span><span><b>Cargar una compra</b><small>con tarjeta</small></span></button>
+      <button class="ir" data-ir="resumen"><span class="ico">◧</span><span><b>Resumen del mes</b><small>lo que entra, lo que va a Casa y lo que te queda</small></span></button>
+      <button class="ir" data-ir="fijos"><span class="ico">⟳</span><span><b>Fijos</b><small>gastos e ingresos de todos los meses</small></span></button>
+      <button class="ir" data-ir="mov"><span class="ico">↕</span><span><b>Movimientos</b><small>gastos e ingresos sin tarjeta</small></span></button>
+      <button class="ir" data-ir="ahorro"><span class="ico">◈</span><span><b>Ahorro</b><small>tus fondos</small></span></button>
+      <button class="ir" data-ir="ultimas"><span class="ico">≡</span><span><b>Últimas compras</b><small>para revisar o anular</small></span></button>
+    </div>
+  </section>
+
+  <!-- ══ RESUMEN ══ -->
+  <section id="p-resumen" class="oculto">
+    <h1>Resumen del mes</h1>
+    <p class="sub" id="subResumen">Cargando…</p>
+    <label for="resMes">Mes</label>
+    <select id="resMes" style="max-width:280px;margin-bottom:14px"></select>
+    <div id="resumenBody"><div class="cargando">Leyendo la planilla…</div></div>
+  </section>
+
+  <!-- ══ PLAN DEL MES ══ -->
+  <section id="p-plan" class="oculto">
+    <h1>Proyectar un mes</h1>
+    <p class="sub">Repartí lo que queda: los frascos de cada semana y los servicios previstos.</p>
+    <label for="planMes">Mes a proyectar</label>
+    <select id="planMes" style="max-width:280px"></select>
+    <div class="dosCol" style="margin-top:14px">
+      <div id="planBody"><div class="card"><div class="cargando">Cargando el plan…</div></div></div>
+      <div id="planLado"></div>
+    </div>
+  </section>
+
+  <!-- ══ CARGAR COMPRA ══ -->
+  <section id="p-compra" class="oculto">
+    <h1>Compra con tarjeta</h1>
+    <p class="sub">Se calcula sola la cuota y el mes en que cae.</p>
+    <div class="card">
+      <label for="cDesc">Descripción</label>
+      <input id="cDesc" placeholder="Compra Makro" autocomplete="off">
+
+      <div class="fila2">
+        <div>
+          <label for="cImporte">Importe total</label>
+          <input id="cImporte" type="number" inputmode="decimal" step="0.01" placeholder="0,00">
+        </div>
+        <div>
+          <label for="cCuotas">Cuotas</label>
+          <input id="cCuotas" type="number" inputmode="numeric" min="1" max="24" value="1">
+        </div>
+      </div>
+
+      <label for="cTarjeta">Tarjeta</label>
+      <select id="cTarjeta"></select>
+
+      <div class="fila2">
+        <div>
+          <label for="cFecha">Fecha de compra</label>
+          <input id="cFecha" type="date">
+        </div>
+        <div>
+          <label for="cMoneda">Moneda</label>
+          <select id="cMoneda"><option>ARS</option><option>USD</option></select>
+        </div>
+      </div>
+
+      <label for="cPrimera">Primera cuota
+        <span id="cPrimeraModo" style="float:right;font-weight:400"></span></label>
+      <input type="month" id="cPrimera">
+
+      <label for="cDeQuien">¿De quién es el gasto?</label>
+      <select id="cDeQuien" class="deQuien"></select>
+      <div id="cReparto" class="aviso oculto"></div>
+
+      <label for="cObs">Observaciones (opcional)</label>
+      <input id="cObs" placeholder="" autocomplete="off">
+
+      <div class="aviso" id="cAviso">Completá el importe y elegí la tarjeta.</div>
+
+      <button id="cGuardar">Guardar compra</button>
+    </div>
+
+    <div class="card" id="misTarjetas"><div class="cargando">Cargando tarjetas…</div></div>
+  </section>
+
+  <!-- ══ MOVIMIENTO ══ -->
+  <section id="p-mov" class="oculto">
+    <h1>Movimiento</h1>
+    <p class="sub">Gastos e ingresos que no van por tarjeta.</p>
+    <div class="card">
+      <div class="fila2">
+        <div>
+          <label for="mTipo">Tipo</label>
+          <select id="mTipo"><option>EGRESO</option><option>INGRESO</option></select>
+        </div>
+        <div>
+          <label for="mImporte">Importe</label>
+          <input id="mImporte" type="number" inputmode="decimal" step="0.01" placeholder="0,00">
+        </div>
+      </div>
+
+      <label for="mDesc">Descripción</label>
+      <input id="mDesc" placeholder="Epec septiembre" autocomplete="off">
+
+      <div class="fila2">
+        <div>
+          <label for="mCat">Categoría</label>
+          <input id="mCat" placeholder="Servicios" autocomplete="off">
+        </div>
+        <div>
+          <label for="mSub">Subcategoría</label>
+          <input id="mSub" placeholder="Luz" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="fila2">
+        <div>
+          <label for="mMedio">Medio de pago</label>
+          <select id="mMedio">
+            <option>DÉBITO</option><option>EFECTIVO</option>
+            <option>TRANSFERENCIA</option><option>DÉBITO AUTOMÁTICO</option>
+          </select>
+        </div>
+        <div>
+          <label for="mCuenta">Cuenta</label>
+          <input id="mCuenta" placeholder="BRUBANK" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="fila2">
+        <div>
+          <label for="mFecha">Fecha</label>
+          <input id="mFecha" type="date">
+        </div>
+        <div>
+          <label for="mDeQuien">¿De quién es?</label>
+          <select id="mDeQuien" class="deQuien"></select>
+        </div>
+      </div>
+      <div id="mReparto" class="aviso oculto"></div>
+
+      <button id="mGuardar">Guardar movimiento</button>
+    </div>
+  </section>
+
+  <!-- ══ AHORRO ══ -->
+  <section id="p-ahorro" class="oculto">
+    <h1>Ahorro</h1>
+    <p class="sub">Lo que tenés guardado, fondo por fondo. Si el saldo cambió, ponelo y la app anota sola la diferencia.</p>
+
+    <div id="fondosLista"><div class="card"><div class="cargando">Cargando…</div></div></div>
+
+    <div class="card">
+      <h2>Cargar un movimiento suelto</h2>
+      <div class="fila2">
+        <div>
+          <label for="aTipo">Tipo</label>
+          <select id="aTipo">
+            <option>APORTE</option><option>RETIRO</option>
+            <option>SALDO INICIAL</option><option>RENDIMIENTO</option>
+          </select>
+        </div>
+        <div>
+          <label for="aImporte">Importe</label>
+          <input id="aImporte" type="number" inputmode="decimal" step="0.01" placeholder="0,00">
+        </div>
+      </div>
+
+      <label for="aFondo">Fondo</label>
+      <input id="aFondo" placeholder="FCI BRUBANK" autocomplete="off" list="listaFondos">
+      <datalist id="listaFondos"></datalist>
+
+      <div class="fila2">
+        <div>
+          <label for="aMotivo">Motivo</label>
+          <input id="aMotivo" placeholder="EMERGENCIA" autocomplete="off">
+        </div>
+        <div>
+          <label for="aMoneda">Moneda</label>
+          <select id="aMoneda"><option>ARS</option><option>USD</option></select>
+        </div>
+      </div>
+
+      <div class="fila2">
+        <div>
+          <label for="aFecha">Fecha</label>
+          <input id="aFecha" type="date">
+        </div>
+        <div>
+          <label for="aCuenta">Cuenta</label>
+          <input id="aCuenta" placeholder="BRUBANK" autocomplete="off">
+        </div>
+      </div>
+
+      <button id="aGuardar">Guardar ahorro</button>
+    </div>
+  </section>
+  <!-- ══ GASTOS E INGRESOS FIJOS ══ -->
+  <section id="p-fijos" class="oculto">
+    <h1>Fijos</h1>
+    <p class="sub">Lo que se repite todos los meses. Si cambió un precio, usá «Actualizó el precio».</p>
+    <div class="dosCol">
+      <div id="fijosGastos"><div class="card"><div class="cargando">Cargando…</div></div></div>
+      <div id="fijosIngresos"></div>
+    </div>
+  </section>
+
+  <!-- ══ ÚLTIMAS ══ -->
+  <section id="p-ultimas" class="oculto">
+    <h1>Últimas compras</h1>
+    <p class="sub">Para revisar lo que anotaste desde el celular.</p>
+    <div class="card" id="ultimasBody"><div class="cargando">Cargando…</div></div>
+  </section>
+
+</div>
+
+
 <script>
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+var TARJETAS = [];
+
+function $(id){ return document.getElementById(id); }
+
+function plata(n, moneda){
+  var s = new Intl.NumberFormat('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})
+            .format(Math.abs(n||0));
+  var signo = (n||0) < 0 ? '−' : '';
+  return signo + (moneda === 'USD' ? 'USD ' : '$ ') + s;
+}
+function hoyISO(){
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function toast(txt){
+  var t = document.createElement('div');
+  t.className = 'toast'; t.textContent = txt;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 4200);
+}
+
+// ── Navegación ──
+// La app arranca en Inicio (la botonera). En Inicio la barra de abajo
+// no se muestra; en las demás pantallas sí, con «Inicio» para volver.
+var paginas = ['inicio','resumen','plan','compra','mov','ahorro','fijos','ultimas'];
+function ir(p){
+  paginas.forEach(function(x){ $('p-'+x).classList.toggle('oculto', x !== p); });
+  document.querySelectorAll('nav button').forEach(function(x){ x.classList.toggle('on', x.dataset.p === p); });
+  document.body.classList.toggle('enInicio', p === 'inicio');
+  window.scrollTo(0,0);
+  if (p === 'ultimas') cargarUltimas();
+  if (p === 'fijos') cargarFijos();
+  if (p === 'ahorro') cargarFondos();
+  if (p === 'resumen') cargarResumen(MES_VISTA);
+  if (p === 'plan' && !PLAN) cargarPlan();
+}
+document.querySelectorAll('nav button').forEach(function(b){
+  b.addEventListener('click', function(){ ir(b.dataset.p); });
+});
+document.querySelectorAll('button.ir').forEach(function(b){
+  b.addEventListener('click', function(){ ir(b.dataset.ir); });
+});
+
+// ── Resumen ──
+function cargarMesesResumen(){
+  servidor().withSuccessHandler(function(ms){
+    var antes = $('resMes').value;
+    $('resMes').innerHTML = ms.map(function(m){
+      return '<option value="' + m.valor + '">' + m.etiqueta + (m.esActivo ? ' · en curso' : '') + '</option>';
+    }).join('');
+    if (antes) $('resMes').value = antes;
+  }).getMesesResumen();
+}
+
+$('resMes').addEventListener('change', function(){ cargarResumen(this.value); });
+
+var MES_VISTA = null, QUEDA_VISTA = 0;
+
+/** Lee el mes solo si el Resumen está a la vista (si no, se lee al entrar). */
+function cargarResumen(mes){
+  if ($('p-resumen').classList.contains('oculto')) return;
+  $('resumenBody').innerHTML = '<div class="cargando">Leyendo la planilla…</div>';
+  servidor().withSuccessHandler(pintarResumen)
+    .withFailureHandler(function(e){
+      $('resumenBody').innerHTML = '<div class="card"><div class="aviso alerta">No pude leer la planilla: ' + e.message + '</div></div>';
+    }).getMesCompleto(mes || $('resMes').value || null);
+}
+
+function lin(nom, sub, der, sub2){
+  return '<div class="lin"><div class="izq"><div class="nom">' + nom + '</div>'
+       + (sub ? '<div class="sub2">' + sub + '</div>' : '') + '</div>'
+       + '<div class="der">' + der + (sub2 ? '<small>' + sub2 + '</small>' : '') + '</div></div>';
+}
+
+// La bajada del mes de quien entró: lo que entra → lo que pone en Casa
+// (con el detalle: cada tarjeta, cada fijo y previsto compartido) → sus
+// fijos personales → le queda para repartir → sus frascos y previstos → ahorro.
+// Casa paga todas las tarjetas y lo compartido (ver Casa.js).
+var MES_DATA = null;
+
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function usdTxt(u){ return u ? plata(u, 'USD') : ''; }
+
+function pintarResumen(m){
+  MES_DATA = m;
+  MES_VISTA = m.mes;
+  $('subResumen').textContent = m.mesEtiqueta + ' · actualizado ' + m.alDia;
+  if ($('resMes').value !== m.mes) $('resMes').value = m.mes;
+  var miPct = YO === 'LUCÍA' ? m.pct.lucia : m.pct.ivan;
+  var h = '';
+
+  // ── Entra
+  h += '<div class="card"><h2>Entra</h2>' + lin('Sueldo', '', plata(m.sueldo));
+  if (m.extras) h += lin('Extras previstos', 'retiros del FCI, reintegros', plata(m.extras));
+  h += '<div class="subtot"><span>Total que entra</span><span>' + plata(m.ingresos) + '</span></div></div>';
+
+  // ── Poné en Casa
+  h += '<div class="card"><h2>Poné en Casa</h2>';
+  if (m.pct.faltan.length)
+    h += '<div class="aviso ojito" style="margin:0 0 10px">Falta el sueldo de <b>' + m.pct.faltan.map(nombrePersona).join(' y ')
+       + '</b>: lo compartido va 50 y 50.</div>';
+  else
+    h += '<p class="sub" style="margin:0 0 8px">Lo compartido de ' + m.mesEtiqueta + ' te toca en un ' + pct(miPct) + '.</p>';
+
+  var hayTarj = false;
+  m.casa.items.forEach(function(x){
+    if (x.tipo === 'TARJETA'){
+      hayTarj = true;
+      var det = [];
+      if (x.titular && x.titular !== YO) det.push('de ' + nombrePersona(x.titular));
+      if (x.vence) det.push('vence ' + x.vence);
+      if (x.propio.ars || x.propio.usd) det.push('tus gastos ' + [x.propio.ars ? plata(x.propio.ars) : '', usdTxt(x.propio.usd)].filter(Boolean).join(' + '));
+      if (x.compartido.ars || x.compartido.usd) det.push('tu parte de lo compartido ' + [x.compartido.ars ? plata(x.compartido.ars) : '', usdTxt(x.compartido.usd)].filter(Boolean).join(' + '));
+      h += lin(x.nombre + (x.estimado ? '<span class="chip">fecha estimada</span>' : ''), det.join(' · '), plata(x.ars), usdTxt(x.usd));
+    } else if (x.tipo === 'FIJO'){
+      h += lin(x.nombre, (x.dia ? 'día ' + x.dia + ' · ' : '') + 'total ' + plata(x.total, x.moneda) + ' · tu parte',
+               x.usd ? plata(x.usd, 'USD') : plata(x.ars));
+    }
+  });
+  if (!m.casa.items.some(function(x){ return x.tipo !== 'PREVISTO'; }))
+    h += '<div class="vacio">Este mes no tenés nada en tarjetas ni fijos compartidos.</div>';
+
+  // Previstos compartidos (luz, gas, expensas): se editan acá, los ven los dos.
+  h += '<div class="grupoRep">Gastos previstos compartidos</div>'
+     + '<p class="sub" style="margin:0 0 4px">El total de cada uno; a vos te toca el ' + pct(miPct) + '.'
+     + (m.previstosHeredadoDe ? ' Copiados de ' + m.previstosHeredadoDe + '.' : '') + '</p>'
+     + '<div id="prevComp"></div>'
+     + '<button class="sec" onclick="agregarPrevisto(\'prevComp\')">+ Agregar un previsto compartido</button>';
+
+  h += '<div class="subtot"><span>Total a poner en Casa</span><span id="casaTotal">−</span></div>'
+     + '<div class="sub2 suave" id="casaUsd" style="font-size:12px;margin-top:4px"></div></div>';
+
+  // ── Mis fijos personales fuera de tarjeta
+  h += '<div class="card"><h2>Mis fijos fuera de tarjeta</h2>';
+  if (!m.fijos.length) h += '<div class="vacio">No tenés fijos personales fuera de tarjeta este mes.</div>';
+  m.fijos.forEach(function(f){
+    h += lin(f.concepto, (f.dia ? 'día ' + f.dia + ' · ' : '') + String(f.medio || '').toLowerCase(), plata(f.importe, f.moneda));
+  });
+  if (m.fijosUsd) h += lin('En pesos, los dólares', 'USD ' + m.fijosUsd.toFixed(2).replace('.', ',') + ' a ' + plata(m.dolar.compra), plata(m.pesosFijosUsd));
+  h += '<div class="subtot"><span>Total fijos</span><span>− ' + plata(m.totalFijos + m.pesosFijosUsd) + '</span></div></div>';
+
+  // ── Me queda
+  h += '<div class="card hero"><div class="etq">Te queda para repartir</div>'
+     + '<div class="num" id="quedaNum">−</div><div class="pie" id="quedaPie"></div></div>';
+
+  // ── Mi reparto
+  var pl = m.plan;
+  h += '<div class="card"><h2>Mi reparto del mes</h2>';
+  if (pl.heredadoDe) h += '<div class="aviso">Te copié los frascos y gastos de <b>' + pl.heredadoDe + '</b>.</div>';
+  h += '<div class="grupoRep">Frascos de cada semana</div>';
+  pl.frascos.forEach(function(f,i){
+    h += '<div class="repFila"><span>' + esc(f.etiqueta || ('Semana ' + (i+1))) + '</span>'
+       + '<input type="number" inputmode="decimal" step="1000" id="rf' + i + '" value="'
+       + (f.importe || '') + '" oninput="recalcularReparto()"></div>';
+  });
+  h += '<div class="grupoRep">Mis gastos previstos</div><div id="prevMios"></div>'
+     + '<button class="sec" onclick="agregarPrevisto(\'prevMios\')">+ Agregar un gasto previsto</button>';
+  h += '<div class="subtot"><span>Total repartido</span><span id="repTotal">−</span></div>'
+     + '<div class="repFila" style="margin-top:12px;border-top:1px solid var(--linea);padding-top:12px">'
+     + '<span>No quiero ahorrar menos de<small style="display:block;color:var(--suave)">Si el mes queda por debajo, te aviso</small></span>'
+     + '<input type="number" inputmode="decimal" step="1000" id="rMin" value="' + m.minimoAhorro + '" oninput="recalcularReparto()"></div>'
+     + '<button onclick="guardarReparto(this)">Guardar el reparto</button></div>';
+
+  h += '<div class="card"><h2>Vas a ahorrar</h2>'
+     + '<div style="font-size:30px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums" id="rAhorro">—</div>'
+     + '<div class="aviso" id="rVeredicto" style="margin-top:12px"></div></div>';
+
+  // ── Casa: lo que paga y lo que pone cada uno
+  var vc = m.vistaCasa;
+  h += '<div class="card"><h2>Casa en ' + m.mesEtiqueta + '</h2>'
+     + lin('Pone Iván', '', plata(vc.aportes['IVÁN'])) + lin('Pone Lucía', '', plata(vc.aportes['LUCÍA']))
+     + '<div class="grupoRep">Casa paga</div>';
+  vc.paga.forEach(function(x){
+    var sub = x.tipo === 'TARJETA' ? (x.vence ? 'vence ' + x.vence : 'resumen de la tarjeta')
+            : (x.tipo === 'FIJO' ? 'fijo compartido' + (x.dia ? ' · día ' + x.dia : '') : 'previsto compartido');
+    h += lin(x.nombre, sub, x.ars ? plata(x.ars) : plata(x.usd, 'USD'), x.ars && x.usd ? usdTxt(x.usd) : '');
+  });
+  h += '<div class="subtot"><span>Total (dólares al oficial)</span><span>' + plata(vc.total) + '</span></div>'
+     + '<p class="sub" style="margin:10px 0 0">Con lo que está guardado. Si los dos ponen lo suyo, Casa queda en cero.</p></div>';
+
+  $('resumenBody').innerHTML = h;
+
+  // Filas editables de previstos (compartidos y míos).
+  m.previstosCompartidos.forEach(function(s){ agregarPrevisto('prevComp', s); });
+  pl.servicios.forEach(function(s){ if (s.etiqueta || s.importe) agregarPrevisto('prevMios', s); });
+  if (!$('prevMios').children.length) agregarPrevisto('prevMios');
+  recalcularReparto();
+}
+
+/** Un renglón editable de gasto previsto. El botón lo pasa de mío a compartido y al revés. */
+function agregarPrevisto(lista, s){
+  s = s || {};
+  var div = document.createElement('div');
+  div.className = 'repFila';
+  var comp = lista === 'prevComp';
+  div.innerHTML = '<input class="nomServ" placeholder="Concepto" value="' + esc(s.etiqueta || '') + '">'
+    + '<input type="number" inputmode="decimal" step="1000" value="' + (s.importe || '') + '">'
+    + '<button class="sec" style="width:auto;margin:0;padding:8px 10px" title="'
+    + (comp ? 'Pasar a mío' : 'Pasar a compartido') + '">' + (comp ? 'mío' : 'compartido') + '</button>';
+  div.querySelectorAll('input').forEach(function(i){ i.addEventListener('input', recalcularReparto); });
+  div.querySelector('button').addEventListener('click', function(){
+    var dest = comp ? 'prevMios' : 'prevComp';
+    var ins = div.querySelectorAll('input');
+    agregarPrevisto(dest, { etiqueta: ins[0].value, importe: ins[1].value });
+    div.remove();
+    recalcularReparto();
+  });
+  $(lista).appendChild(div);
+  if (!s.etiqueta && !s.importe && $(lista).children.length > 1) div.querySelector('input').focus();
+}
+
+function leerPrevistos(lista){
+  var out = [];
+  $(lista).querySelectorAll('.repFila').forEach(function(f){
+    var ins = f.querySelectorAll('input');
+    out.push({ etiqueta: ins[0].value.trim(), importe: parseFloat(ins[1].value) || 0 });
+  });
+  return out.filter(function(x){ return x.etiqueta || x.importe; });
+}
+
+function recalcularReparto(){
+  var m = MES_DATA; if (!m || !$('rf0')) return;
+  var miPct = YO === 'LUCÍA' ? m.pct.lucia : m.pct.ivan;
+
+  // Casa: lo que vino del servidor sin los previstos guardados, más los de la pantalla.
+  var prevServidor = 0;
+  m.casa.items.forEach(function(x){ if (x.tipo === 'PREVISTO') prevServidor += x.ars; });
+  var prevPantalla = 0;
+  leerPrevistos('prevComp').forEach(function(x){ prevPantalla += x.importe * miPct; });
+  var casa = m.casa.pesos - prevServidor + prevPantalla;
+  $('casaTotal').textContent = '− ' + plata(casa);
+  $('casaUsd').textContent = m.casa.usd
+    ? 'Incluye USD ' + m.casa.usd.toFixed(2).replace('.', ',') + ' al oficial de ' + plata(m.dolar.compra)
+      + (m.dolar.enVivo ? '' : ' (último valor conocido)') + '.' : '';
+
+  var queda = m.queda + (m.casa.pesos - casa);
+  $('quedaNum').textContent = plata(queda);
+  $('quedaNum').className = 'num ' + (queda >= 0 ? 'pos' : 'neg');
+  $('quedaPie').textContent = plata(m.ingresos) + ' − ' + plata(casa) + ' a Casa − '
+    + plata(m.totalFijos + m.pesosFijosUsd) + ' de fijos';
+
+  var rep = 0, i;
+  for (i = 0; $('rf' + i); i++) rep += parseFloat($('rf' + i).value) || 0;
+  leerPrevistos('prevMios').forEach(function(x){ rep += x.importe; });
+  var min = parseFloat($('rMin').value) || 0;
+  var ahorro = queda - rep;
+  QUEDA_VISTA = queda;
+
+  $('repTotal').textContent = '− ' + plata(rep);
+  $('rAhorro').textContent = plata(ahorro);
+  $('rAhorro').className = ahorro >= 0 ? 'pos' : 'neg';
+
+  var v = $('rVeredicto');
+  if (ahorro < 0){
+    v.className = 'aviso alerta';
+    v.innerHTML = 'Te estás pasando por <b>' + plata(-ahorro) + '</b>. Hay que bajar algún frasco o algún gasto.';
+  } else if (ahorro >= min){
+    v.className = 'aviso';
+    v.innerHTML = 'Estás arriba de tu piso de ' + plata(min) + '. Te sobran <b>' + plata(ahorro - min) + '</b> para gastar o mandar al ahorro.';
+  } else {
+    v.className = 'aviso alerta';
+    v.innerHTML = 'Quedás <b>' + plata(min - ahorro) + '</b> por debajo de tu piso de ' + plata(min) + '. Mejor no comprar nada este mes.';
+  }
+}
+
+function guardarReparto(b){
+  var txt = b.textContent;
+  var frascos = [], i;
+  for (i = 0; $('rf' + i); i++)
+    frascos.push({ etiqueta: 'Semana ' + (i+1), importe: $('rf' + i).value || 0 });
+
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){
+      b.disabled = false; b.textContent = txt;
+      toast(r && r.mensaje ? r.mensaje : 'Reparto guardado.');
+      cargarResumen(MES_VISTA);
+    })
+    .withFailureHandler(function(e){
+      b.disabled = false; b.textContent = txt; toast('No se pudo: ' + e.message);
+    })
+    .guardarPlan({ mes: MES_VISTA, base: QUEDA_VISTA, frascos: frascos,
+                   servicios: leerPrevistos('prevMios'), compartidos: leerPrevistos('prevComp'),
+                   minimoAhorro: $('rMin').value });
+}
+
+function par(k,v){ return '<div class="par"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>'; }
+
+// ══ PROYECTAR UN MES ══════════════════════════════════════════
+// El cuadro que Iván arma antes de que empiece el mes: cuánto va a
+// cada semana, cuánto a cada servicio, y qué queda para ahorrar.
+// Cada mes se guarda aparte, así puede tener noviembre, diciembre y
+// enero proyectados a la vez sin pisarse entre ellos.
+var PLAN = null;
+var CONFIG = { minimoAhorro: 300000 };
+
+function cargarConfig(luego){
+  servidor().withSuccessHandler(function(c){
+    CONFIG = c; if (luego) luego();
+  }).getConfig();
+}
+
+function cargarMeses(){
+  servidor().withSuccessHandler(function(ms){
+    $('planMes').innerHTML = ms.map(function(m){
+      return '<option value="' + m.valor + '">' + m.etiqueta + '</option>';
+    }).join('');
+    cargarPlan();
+  }).getMesesPlan();
+}
+
+$('planMes').addEventListener('change', function(){ cargarPlan(this.value); });
+
+function cargarPlan(mes){
+  $('planBody').innerHTML = '<div class="card"><div class="cargando">Cargando…</div></div>';
+  servidor()
+    .withSuccessHandler(function(p){
+      PLAN = p;
+      if ($('planMes').value !== p.mes) $('planMes').value = p.mes;
+      pintarPlan();
+    })
+    .withFailureHandler(function(e){
+      $('planBody').innerHTML = '<div class="card"><div class="aviso alerta">'
+        + 'No pude leer el cuadro: ' + e.message + '</div></div>';
+    })
+    .getPlan(mes || $('planMes').value || null);
+}
+
+function pintarPlan(){
+  var p = PLAN;
+
+  var h = '<div class="card plan">';
+  if (p.heredadoDe){
+    h += '<div class="aviso">Todavía no proyectaste <b>' + p.mesEtiqueta
+       + '</b>. Te copié los frascos y servicios de <b>' + p.heredadoDe
+       + '</b> para que cambies solo lo que cambia.'
+       + (p.proyectado ? ' La plata a repartir sale del saldo previsto de ' + p.mesEtiqueta + '.' : '')
+       + '</div>';
+  }
+
+  if (p.propio && p.proyectado && Math.abs(p.desfase) >= 1){
+    var subio = p.desfase > 0;
+    h += '<div class="aviso' + (subio ? '' : ' alerta') + '">'
+       + 'Cuando proyectaste <b>' + p.mesEtiqueta + '</b> quedaban ' + plata(p.base) + '. '
+       + 'Hoy quedan <b>' + plata(p.proyectado.saldo) + '</b>'
+       + (subio ? ' — se liberó plata.' : ' — cargaste compromisos que caen en ese mes.')
+       + '<br><button class="sec" id="planAlDia" style="margin-top:9px">'
+       + 'Usar ' + plata(p.proyectado.saldo) + '</button></div>';
+  }
+
+  h += '<div class="sec" style="margin-top:14px">Plata a repartir</div>'
+     + '<div class="fila"><span>Disponible en ' + p.mesEtiqueta + (p.proyectado ? '<small>saldo previsto hoy: ' + plata(p.proyectado.saldo) + '</small>' : '') + '</span>'
+     +   '<input type="number" inputmode="decimal" step="0.01" id="planBase" value="' + (p.base||'') + '"></div>'
+     + '<div class="sec">Frascos por semana</div>';
+
+  p.frascos.forEach(function(f,i){
+    h += '<div class="fila"><span>' + (f.etiqueta || ('Semana ' + (i+1))) + '</span>'
+       + '<input type="number" inputmode="decimal" step="0.01" data-tipo="frasco" data-i="' + i + '" value="' + (f.importe||'') + '"></div>';
+  });
+
+  h += '<div class="sec">Servicios y gastos previstos</div>';
+  p.servicios.forEach(function(sv,i){
+    h += '<div class="fila">'
+       + '<input class="nom" data-tipo="nombre" data-i="' + i + '" placeholder="Concepto" value="' + (sv.etiqueta||'').replace(/"/g,'&quot;') + '">'
+       + '<input type="number" inputmode="decimal" step="0.01" data-tipo="servicio" data-i="' + i + '" value="' + (sv.importe||'') + '"></div>';
+  });
+
+  h += '<div class="resto"><span class="k">' + p.etiquetaResto + '</span>'
+     +   '<span class="v" id="planResto">' + plata(p.resto) + '</span></div>'
+     + '<div id="planNota" class="aviso oculto"></div>'
+     + '<div class="fila" style="margin-top:12px;border-top:1px solid var(--linea);padding-top:12px">'
+     +   '<span>No quiero ahorrar menos de<small>Si el mes queda por debajo, te aviso</small></span>'
+     +   '<input type="number" inputmode="decimal" step="1000" id="planMinimo" value="' + (p.minimoAhorro !== undefined ? p.minimoAhorro : CONFIG.minimoAhorro) + '"></div>'
+     + '<label style="display:flex;align-items:center;gap:9px;margin-top:10px;cursor:pointer">'
+     +   '<input type="checkbox" id="planMail" style="width:auto;margin:0"' + (CONFIG.avisoPorMail ? ' checked' : '') + '>'
+     +   '<span>Avisar por mail cuando un mes caiga por debajo</span></label>'
+     + '<div id="planMailFila" class="fila"' + (CONFIG.avisoPorMail ? '' : ' hidden') + '>'
+     +   '<span>Avisos a<small>Llegan siempre acá, cargue quien cargue</small></span>'
+     +   '<input type="email" id="planMailDest" style="text-align:left" value="'
+     +     (CONFIG.mailAvisos || CONFIG.mail || '') + '"></div>'
+     + '<button id="planGuardar">Guardar el plan de ' + p.mesEtiqueta + '</button>'
+     + '</div>';
+
+  $('planBody').innerHTML = h;
+
+  // Panel de al lado: de dónde sale la plata de ese mes.
+  var l = '';
+  if (p.proyectado){
+    l = '<div class="card"><h2>' + p.mesEtiqueta + ' según la planilla</h2>'
+      + par('Ingresos previstos', plata(p.proyectado.ingresos))
+      + par('Gastos no tarjeta', '− ' + plata(p.proyectado.gastos))
+      + par('Tarjetas', '− ' + plata(p.proyectado.tarjetas))
+      + par('<b>Saldo previsto</b>', '<b>' + plata(p.proyectado.saldo) + '</b>')
+      + (p.proyectado.usd ? par('En dólares', plata(p.proyectado.usd,'USD')) : '')
+      + '<p class="sub" style="margin:12px 0 0">Eso es lo que queda después de las tarjetas '
+      + 'y los gastos fijos ya proyectados. De ahí sale la plata a repartir.</p></div>';
+  } else {
+    l = '<div class="card"><div class="aviso">Todavía no hay proyección para ' + p.mesEtiqueta
+      + ' en el Dashboard, así que la plata a repartir la ponés vos.</div></div>';
+  }
+  if (!p.esMesActivo){
+    l += '<div class="card"><div class="aviso">El Dashboard está mostrando <b>' + p.mesActivo
+       + '</b>. Este plan se guarda igual, y cuando el Dashboard pase a ' + p.mesEtiqueta
+       + ' el cuadro se completa solo.</div></div>';
+  }
+  $('planLado').innerHTML = l;
+
+  $('planBody').querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('input', recalcularResto);
+  });
+  $('planGuardar').addEventListener('click', guardarPlanClick);
+  $('planMail').addEventListener('change', function(){
+    $('planMailFila').hidden = !this.checked;
+  });
+  if ($('planAlDia')) $('planAlDia').addEventListener('click', function(){
+    $('planBase').value = PLAN.proyectado.saldo;
+    recalcularResto();
+    toast('Listo. Repartí de nuevo y guardá.');
+  });
+  recalcularResto();
+}
+
+function recalcularResto(){
+  if (!PLAN) return;
+  var base = parseFloat($('planBase').value || 0) || 0;
+  var suma = 0;
+  $('planBody').querySelectorAll('input[data-tipo=frasco],input[data-tipo=servicio]')
+    .forEach(function(i){ suma += parseFloat(i.value || 0) || 0; });
+
+  var resto = base - suma;
+  var minimo = parseFloat(($('planMinimo') || {}).value || CONFIG.minimoAhorro) || 0;
+
+  var el = $('planResto');
+  el.textContent = plata(resto);
+  el.className = 'v ' + (resto < 0 ? 'neg' : (resto < minimo ? 'ojo' : 'pos'));
+
+  var nota = $('planNota');
+  if (resto < 0){
+    nota.className = 'aviso alerta';
+    nota.innerHTML = 'Te pasaste por <b>' + plata(Math.abs(resto))
+      + '</b>. Bajá algún frasco o algún servicio antes de gastar de más.';
+  } else if (resto < minimo){
+    nota.className = 'aviso ojito';
+    nota.innerHTML = 'Vas a ahorrar <b>' + plata(resto) + '</b>, '
+      + plata(minimo - resto) + ' menos de tu piso de ' + plata(minimo) + '.';
+  } else {
+    nota.className = 'aviso oculto';
+  }
+}
+
+function guardarPlanClick(){
+  var b = $('planGuardar');
+  var frascos = [], servicios = [];
+  $('planBody').querySelectorAll('input[data-tipo=frasco]').forEach(function(i){
+    frascos[+i.dataset.i] = { importe: i.value || 0 };
+  });
+  $('planBody').querySelectorAll('input[data-tipo=servicio]').forEach(function(i){
+    servicios[+i.dataset.i] = { importe: i.value || 0 };
+  });
+  $('planBody').querySelectorAll('input[data-tipo=nombre]').forEach(function(i){
+    var k = +i.dataset.i;
+    servicios[k] = servicios[k] || {};
+    servicios[k].etiqueta = i.value;
+  });
+
+  var txt = b.textContent;
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){
+      b.disabled = false; b.textContent = txt;
+      PLAN = r.plan;
+      CONFIG.minimoAhorro = r.plan.minimoAhorro;
+      CONFIG.avisoPorMail = $('planMail').checked;
+      CONFIG.mailAvisos   = $('planMailDest').value;
+      pintarPlan();
+      toast('Plan de ' + r.plan.mesEtiqueta + ' guardado.');
+      if (r.plan.esMesActivo) cargarResumen();
+    })
+    .withFailureHandler(function(e){
+      b.disabled = false; b.textContent = txt;
+      toast('No se pudo guardar: ' + e.message);
+    })
+    .guardarPlan({
+      minimoAhorro : $('planMinimo').value,
+      avisoPorMail : $('planMail').checked,
+      mailAvisos   : $('planMailDest').value,
+      mes       : PLAN.mes,
+      base      : $('planBase').value,
+      frascos   : frascos,
+      servicios : servicios
+    });
+}
+
+// ── Tarjetas ──
+function nombrePersona(p){ return p === 'LUCÍA' ? 'Lucía' : 'Iván'; }
+
+function cargarTarjetas(){
+  servidor().withSuccessHandler(function(ts){
+    TARJETAS = ts;
+    var s = $('cTarjeta'), antes = s.value;
+    s.innerHTML = ts.map(function(t){
+      return '<option value="' + t.nombre + '"' + (t.nombre === antes ? ' selected' : '') + '>'
+           + t.nombre + (t.propia ? '' : ' (extensión de ' + nombrePersona(t.titular) + ')') + '</option>';
+    }).join('');
+    previsualizar();
+    pintarMisTarjetas();
+  }).getTarjetas();
+}
+
+// ══ MIS TARJETAS ══════════════════════════════════════════════
+// Cada uno da de alta y de baja las suyas. Una baja no borra nada:
+// la tarjeta queda inactiva y lo ya cargado sigue apuntando a ella.
+function pintarMisTarjetas(){
+  var mias = TARJETAS.filter(function(t){ return t.propia; });
+  var ajenas = TARJETAS.filter(function(t){ return !t.propia; });
+  var dias = function(t){
+    var c = parseInt(t.cierre, 10), v = parseInt(t.vto, 10);
+    return (c && v) ? 'cierra el ' + c + ', vence el ' + v : 'cierre variable (usa el calendario)';
+  };
+  var h = '<h2>Mis tarjetas</h2>';
+  if (!mias.length) h += '<div class="vacio">Todavía no cargaste tarjetas tuyas.</div>';
+  mias.forEach(function(t){
+    var otro = nombrePersona(t.titular === 'LUCÍA' ? 'IVÁN' : 'LUCÍA');
+    h += '<div class="item"><div class="t"><span>' + t.nombre + '</span></div>'
+       + '<div class="d">' + (t.entidad ? t.entidad + ' · ' : '') + dias(t)
+       + (t.extension ? ' · <b>con extensión para ' + otro + '</b>' : '') + '</div>'
+       + '<div class="acciones">'
+       +   '<button class="sec" onclick="cambiarExtension(\'' + t.id + '\',' + !t.extension + ',this)">'
+       +     (t.extension ? 'Sacar extensión de ' + otro : 'Dar extensión a ' + otro) + '</button>'
+       +   '<button class="sec" onclick="bajaTarjeta(\'' + t.id + '\',\'' + t.nombre + '\',this)">Dar de baja</button>'
+       + '</div></div>';
+  });
+  if (ajenas.length){
+    h += '<div class="grupoRep">Extensiones que usás</div>';
+    ajenas.forEach(function(t){
+      h += '<div class="item"><div class="t"><span>' + t.nombre + '</span></div>'
+         + '<div class="d">de ' + nombrePersona(t.titular) + ' · ' + dias(t) + '</div></div>';
+    });
+  }
+  h += '<button class="sec" onclick="panelTarjetaNueva()" style="margin-top:14px">+ Agregar una tarjeta</button>'
+     + '<div id="panelTarjeta"></div>';
+  $('misTarjetas').innerHTML = h;
+}
+
+function panelTarjetaNueva(){
+  var p = $('panelTarjeta');
+  if (p.innerHTML){ p.innerHTML = ''; return; }
+  p.innerHTML = '<div class="panel">'
+    + '<label for="tNombre">Nombre</label><input id="tNombre" placeholder="VISA GALICIA" autocomplete="off">'
+    + '<label for="tEntidad">Banco o entidad</label><input id="tEntidad" placeholder="Banco Galicia" autocomplete="off">'
+    + '<div class="fila2"><div><label for="tCierre">Día de cierre</label>'
+    +   '<input id="tCierre" type="number" inputmode="numeric" min="1" max="31" placeholder="27"></div>'
+    +   '<div><label for="tVto">Día de vencimiento</label>'
+    +   '<input id="tVto" type="number" inputmode="numeric" min="1" max="31" placeholder="10"></div></div>'
+    + '<div class="aviso">Si el cierre cambia cada mes, dejalos vacíos: la app usa el calendario de la tarjeta.</div>'
+    + '<label style="display:flex;align-items:center;gap:9px;margin-top:12px;cursor:pointer">'
+    +   '<input type="checkbox" id="tExt" style="width:auto;margin:0"><span>Tiene extensión para '
+    +   nombrePersona(YO === 'LUCÍA' ? 'IVÁN' : 'LUCÍA') + '</span></label>'
+    + '<button onclick="guardarTarjeta(this)">Dar de alta</button></div>';
+  p.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+function guardarTarjeta(b){
+  if (!$('tNombre').value.trim()) return toast('Falta el nombre.');
+  var txt = b.textContent; b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarTarjetas(); })
+    .withFailureHandler(function(e){ b.disabled = false; b.textContent = txt; toast('No se pudo: ' + e.message); })
+    .crearTarjeta({ nombre: $('tNombre').value, entidad: $('tEntidad').value,
+                    cierre: $('tCierre').value, vto: $('tVto').value, extension: $('tExt').checked });
+}
+
+function cambiarExtension(id, si, b){
+  b.disabled = true;
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarTarjetas(); })
+    .withFailureHandler(function(e){ b.disabled = false; toast('No se pudo: ' + e.message); })
+    .cambiarExtensionTarjeta(id, si);
+}
+
+function bajaTarjeta(id, nombre, b){
+  if (!confirm('¿Dar de baja ' + nombre + '? Lo ya cargado no se borra.')) return;
+  b.disabled = true;
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarTarjetas(); })
+    .withFailureHandler(function(e){ b.disabled = false; toast('No se pudo: ' + e.message); })
+    .darDeBajaTarjeta(id);
+}
+
+// ── Previsualización de la compra ──
+var timer = null;
+var primeraManual = false;   // true cuando el mes lo elige Iván y no el calendario
+
+var MESES = ['enero','febrero','marzo','abril','mayo','junio',
+             'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function nombreDeMesISO(iso){
+  if (!iso) return '';
+  var p = iso.split('-');
+  return MESES[parseInt(p[1],10) - 1] + ' ' + p[0];
+}
+function sumarMesesISO(iso, n){
+  var p = iso.split('-');
+  var d = new Date(parseInt(p[0],10), parseInt(p[1],10) - 1 + n, 1);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+
+function marcarModo(){
+  $('cPrimeraModo').innerHTML = primeraManual
+    ? '<a href="#" onclick="volverAutomatico();return false" style="color:var(--acento)">volver al automático</a>'
+    : '<span class="suave">la calcula sola</span>';
+}
+
+function volverAutomatico(){
+  primeraManual = false;
+  previsualizar(true);
+}
+
+$('cPrimera').addEventListener('change', function(){
+  primeraManual = true;
+  previsualizar();
+});
+
+function pintarAvisoCompra(c){
+  var imp = parseFloat($('cImporte').value || 0);
+  var cu  = Math.max(1, parseInt($('cCuotas').value || 1, 10));
+  var desde = $('cPrimera').value;
+  if (!desde) return;
+  var hasta = sumarMesesISO(desde, cu - 1);
+
+  var txt = cu > 1
+    ? '<b>' + cu + ' cuotas de ' + plata(imp/cu) + '</b>, de <b>' + nombreDeMesISO(desde)
+      + '</b> a <b>' + nombreDeMesISO(hasta) + '</b>'
+    : '<b>' + plata(imp) + '</b> en un pago, en <b>' + nombreDeMesISO(desde) + '</b>';
+
+  var clase = 'aviso';
+  if (primeraManual){
+    txt += '<br>Mes elegido a mano.';
+    if (c && c.mes && c.mes.slice(0,7) !== desde)
+      txt += ' Según el calendario de la tarjeta caería en <b>' + c.etiqueta + '</b>.';
+  } else if (c && c.confiable){
+    txt += '<br>El resumen cierra el ' + c.cierre + ' y vence el ' + c.vto
+         + (c.estimado ? ' (estimado con los días habituales de la tarjeta).' : '.');
+  } else if (c){
+    clase = 'aviso alerta';
+    txt += '<br>Ojo: no hay calendario cargado para esa tarjeta, así que tomé el mes siguiente.';
+  }
+  $('cAviso').className = clase;
+  $('cAviso').innerHTML = txt;
+}
+
+function previsualizar(forzarAuto){
+  if (forzarAuto) primeraManual = false;
+  marcarModo();
+
+  var imp = parseFloat($('cImporte').value || 0);
+  var tar = $('cTarjeta').value;
+  var fec = $('cFecha').value;
+
+  if (!imp || !tar || !fec){
+    $('cAviso').className = 'aviso';
+    $('cAviso').textContent = 'Completá el importe y elegí la tarjeta.';
+    return;
+  }
+
+  // Con el mes puesto a mano se pinta al instante, pero igual se consulta
+  // el calendario para poder avisar si no coincide con lo que correspondería.
+  if (primeraManual) pintarAvisoCompra(window.__calc || null);
+  else { $('cAviso').className = 'aviso'; $('cAviso').innerHTML = 'Calculando en qué resumen cae…'; }
+
+  clearTimeout(timer);
+  timer = setTimeout(function(){
+    servidor().withSuccessHandler(function(c){
+      window.__calc = c;
+      if (!primeraManual) $('cPrimera').value = c.mes.slice(0,7);
+      if ($('cDeQuien').value === 'COMPARTIDO') mostrarReparto($('cReparto'), 'COMPARTIDO', $('cPrimera').value);
+      pintarAvisoCompra(c);
+    }).calcularPrimeraCuota(tar, fec);
+  }, 260);
+}
+
+['cImporte','cCuotas','cTarjeta','cFecha'].forEach(function(id){
+  $(id).addEventListener('input', previsualizar);
+  $(id).addEventListener('change', previsualizar);
+});
+
+// ══ ¿DE QUIÉN ES EL GASTO? ════════════════════════════════════
+// Mío · del otro · compartido. Lo compartido se reparte según lo que
+// cobra cada uno ese mes (ver porcentajesDelMes_ en Código.js).
+function pct(x){ return (Math.round(x * 1000) / 10).toString().replace('.', ',') + ' %'; }
+
+function opcionesDeQuien(){
+  var otro = YO === 'LUCÍA' ? 'IVÁN' : 'LUCÍA';
+  document.querySelectorAll('select.deQuien').forEach(function(s){
+    var antes = s.value;
+    s.innerHTML = '<option value="' + YO + '">Mío</option>'
+      + '<option value="COMPARTIDO">Compartido</option>'
+      + '<option value="' + otro + '">De ' + nombrePersona(otro) + '</option>';
+    if (antes) s.value = antes;
+    if (!s.value) s.value = YO;
+  });
+}
+
+/** Muestra cómo se reparte un compartido en el mes dado (aaaa-mm). */
+function mostrarReparto(caja, deQuien, mesISO){
+  if (deQuien !== 'COMPARTIDO'){ caja.classList.add('oculto'); return; }
+  caja.className = 'aviso'; caja.textContent = 'Calculando el reparto…';
+  servidor().withSuccessHandler(function(p){
+    var txt = 'En <b>' + p.mes + '</b>: Iván ' + pct(p.ivan) + ' · Lucía ' + pct(p.lucia)
+            + ' (según los sueldos de ese mes).';
+    if (p.faltan.length)
+      txt = 'Falta cargar el sueldo de <b>' + p.faltan.map(nombrePersona).join(' y ')
+          + '</b> en Fijos, así que por ahora va 50 y 50.';
+    caja.className = 'aviso' + (p.faltan.length ? ' ojito' : '');
+    caja.innerHTML = txt;
+  }).getPorcentajes(mesISO || null);
+}
+
+$('cDeQuien').addEventListener('change', function(){ mostrarReparto($('cReparto'), this.value, $('cPrimera').value); });
+$('cPrimera').addEventListener('change', function(){ mostrarReparto($('cReparto'), $('cDeQuien').value, this.value); });
+$('mDeQuien').addEventListener('change', function(){ mostrarReparto($('mReparto'), this.value, ($('mFecha').value || '').slice(0, 7)); });
+
+$('cGuardar').addEventListener('click', function(){
+  var b = this;
+  if (!$('cDesc').value.trim())  return toast('Falta la descripción.');
+  if (!parseFloat($('cImporte').value)) return toast('Falta el importe.');
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(res){
+      b.disabled = false; b.textContent = 'Guardar compra';
+      toast('Listo. ' + res.mensaje);
+      if (res.alertas && res.alertas.length){
+        var a = res.alertas.map(function(x){
+          return x.mes + ': ' + plata(x.resto) + (x.negativo ? ' (en rojo)' : '');
+        }).join(' · ');
+        $('cAviso').className = 'aviso ojito';
+        $('cAviso').innerHTML = 'Ojo: con esta compra el ahorro queda por debajo de tu piso de '
+          + plata(res.alertas[0].minimo) + ' en ' + a + '.'
+          + (CONFIG.avisoPorMail ? '<br>Te mandé el detalle por mail.' : '');
+        return;
+      }
+      $('cDesc').value = ''; $('cImporte').value = ''; $('cCuotas').value = '1'; $('cObs').value = '';
+      previsualizar(true); cargarResumen();
+    })
+    .withFailureHandler(function(e){
+      b.disabled = false; b.textContent = 'Guardar compra';
+      toast('No se pudo guardar: ' + e.message);
+    })
+    .guardarCompra({
+      descripcion : $('cDesc').value.trim(),
+      importe     : $('cImporte').value,
+      cuotas      : $('cCuotas').value,
+      tarjeta     : $('cTarjeta').value,
+      fecha       : $('cFecha').value,
+      moneda      : $('cMoneda').value,
+      deQuien     : $('cDeQuien').value,
+      observaciones: $('cObs').value.trim(),
+      primeraCuota: $('cPrimera').value ? $('cPrimera').value + '-01' : ''
+    });
+});
+
+// ── Movimiento ──
+$('mGuardar').addEventListener('click', function(){
+  var b = this;
+  if (!parseFloat($('mImporte').value)) return toast('Falta el importe.');
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(res){
+      b.disabled = false; b.textContent = 'Guardar movimiento';
+      toast('Listo. ' + res.mensaje);
+      $('mImporte').value = ''; $('mDesc').value = '';
+      cargarResumen();
+    })
+    .withFailureHandler(function(e){
+      b.disabled = false; b.textContent = 'Guardar movimiento';
+      toast('No se pudo guardar: ' + e.message);
+    })
+    .guardarMovimiento({
+      tipo        : $('mTipo').value,
+      importe     : $('mImporte').value,
+      descripcion : $('mDesc').value.trim(),
+      categoria   : $('mCat').value.trim(),
+      subcategoria: $('mSub').value.trim(),
+      medio       : $('mMedio').value,
+      cuenta      : $('mCuenta').value.trim(),
+      fecha       : $('mFecha').value,
+      deQuien     : $('mDeQuien').value
+    });
+});
+
+// ── Ahorro ──
+$('aGuardar').addEventListener('click', function(){
+  var b = this;
+  if (!parseFloat($('aImporte').value)) return toast('Falta el importe.');
+  if (!$('aFondo').value.trim())        return toast('Falta el fondo.');
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(res){
+      b.disabled = false; b.textContent = 'Guardar ahorro';
+      toast('Listo. ' + res.mensaje);
+      $('aImporte').value = '';
+      cargarFondos();
+    })
+    .withFailureHandler(function(e){
+      b.disabled = false; b.textContent = 'Guardar ahorro';
+      toast('No se pudo guardar: ' + e.message);
+    })
+    .guardarAhorro({
+      tipo    : $('aTipo').value,
+      importe : $('aImporte').value,
+      fondo   : $('aFondo').value.trim(),
+      motivo  : $('aMotivo').value.trim(),
+      moneda  : $('aMoneda').value,
+      fecha   : $('aFecha').value,
+      cuenta  : $('aCuenta').value.trim()
+    });
+});
+
+// ══ FONDOS DE AHORRO ═══════════════════════════════════════════
+// Un fondo no es una fila de la planilla: es la suma de todos sus
+// movimientos. Por eso el saldo no se "edita", se dice cuánto hay y
+// la app escribe el aporte o el retiro que falta para llegar ahí.
+var FONDOS = null;
+
+function cargarFondos(){
+  $('fondosLista').innerHTML = '<div class="card"><div class="cargando">Cargando…</div></div>';
+  servidor()
+    .withSuccessHandler(function(f){ FONDOS = f; pintarFondos(); })
+    .withFailureHandler(function(e){
+      $('fondosLista').innerHTML =
+        '<div class="card"><div class="aviso">No pude leer los fondos: ' + e.message + '</div></div>';
+    })
+    .getFondos();
+}
+
+function pintarFondos(){
+  var h = '<div class="card"><h2>Lo que tengo guardado</h2>';
+
+  if (!FONDOS.length){
+    h += '<div class="vacio">Todavía no cargaste ningún fondo.</div>';
+  } else {
+    var totales = {};
+    FONDOS.forEach(function(x, i){
+      totales[x.moneda] = (totales[x.moneda] || 0) + x.saldo;
+
+      var det = [];
+      if (x.cuenta) det.push(x.cuenta);
+      if (x.ultima) det.push('último movimiento ' + x.ultima);
+
+      h += '<div class="item">'
+         + '<div class="t"><span>' + x.fondo + '</span>'
+         +   '<span>' + plata(x.saldo, x.moneda) + '</span></div>'
+         + '<div class="d">' + (det.join(' · ') || 'sin cuenta');
+      if (x.pendiente)
+        h += ' · <span class="ojo">' + plata(x.pendiente, x.moneda) + ' pendiente</span>';
+      h += '</div>'
+         + '<div class="acciones">'
+         +   '<button class="sec" onclick="panelFondo(' + i + ',\'saldo\')">Actualicé el saldo</button>'
+         +   '<button class="sec" onclick="panelFondo(' + i + ',\'datos\')">Nombre o cuenta</button>'
+         + '</div><div id="panel-fondo-' + i + '"></div>'
+         + '</div>';
+    });
+
+    Object.keys(totales).forEach(function(m){
+      h += '<div class="subtot"><span>Total en ' + m + '</span>'
+         +   '<span>' + plata(totales[m], m) + '</span></div>';
+    });
+  }
+
+  h += '<button class="sec" onclick="panelFondo(-1,\'nuevo\')" style="margin-top:14px">'
+     +   '+ Agregar un fondo</button>'
+     + '<div id="panel-fondo-nuevo"></div></div>';
+
+  $('fondosLista').innerHTML = h;
+
+  // El campo "Fondo" del formulario de abajo se autocompleta con los que ya existen.
+  $('listaFondos').innerHTML = FONDOS.map(function(x){
+    return '<option value="' + x.fondo + '">';
+  }).join('');
+}
+
+function panelFondo(i, modo){
+  var destino = i < 0 ? $('panel-fondo-nuevo') : $('panel-fondo-' + i);
+  if (destino.innerHTML){ destino.innerHTML = ''; return; }
+  document.querySelectorAll('[id^=panel-fondo-]').forEach(function(p){ p.innerHTML = ''; });
+
+  var x = i < 0 ? null : FONDOS[i];
+  var h = '<div class="panel">';
+
+  if (modo === 'saldo'){
+    h += '<div class="fila2">'
+       +   '<div><label>Cuánto tengo hoy</label>'
+       +     '<input type="number" inputmode="decimal" step="0.01" id="sSaldo" value="' + x.saldo
+       +     '" oninput="previoSaldo(' + i + ')"></div>'
+       +   '<div><label>A qué fecha</label>'
+       +     '<input type="date" id="sFecha" value="' + hoyISO() + '"></div>'
+       + '</div>'
+       + '<label>Cuenta</label>'
+       + '<input id="sCuenta" value="' + (x.cuenta || '') + '" placeholder="BRUBANK" autocomplete="off">'
+       + '<div class="aviso" id="sPrevio"></div>'
+       + '<button onclick="guardarSaldoFondo(' + i + ')">Guardar el saldo</button>';
+
+  } else if (modo === 'datos'){
+    h += '<label>Nombre del fondo</label>'
+       + '<input id="dFondo" value="' + x.fondo + '" autocomplete="off">'
+       + '<label>Cuenta</label>'
+       + '<input id="dCuenta" value="' + (x.cuenta || '') + '" placeholder="BRUBANK" autocomplete="off">'
+       + '<div class="aviso">Se corrige en los ' + x.movimientos
+       +   (x.movimientos === 1 ? ' movimiento' : ' movimientos') + ' que ya tenés cargados, '
+       +   'así no te quedan dos fondos con el mismo dinero.</div>'
+       + '<button onclick="guardarDatosFondo(' + i + ')">Guardar</button>';
+
+  } else {
+    h += '<label>Nombre del fondo</label>'
+       + '<input id="nFondo" placeholder="FCI BRUBANK" autocomplete="off">'
+       + '<div class="fila2">'
+       +   '<div><label>Cuánto tengo</label>'
+       +     '<input type="number" inputmode="decimal" step="0.01" id="nSaldo" placeholder="0,00"></div>'
+       +   '<div><label>Moneda</label>'
+       +     '<select id="nMonedaF"><option>ARS</option><option>USD</option></select></div>'
+       + '</div>'
+       + '<div class="fila2">'
+       +   '<div><label>Cuenta</label>'
+       +     '<input id="nCuentaF" placeholder="BRUBANK" autocomplete="off"></div>'
+       +   '<div><label>Desde</label>'
+       +     '<input type="date" id="nFechaF" value="' + hoyISO() + '"></div>'
+       + '</div>'
+       + '<button onclick="guardarFondoNuevo()">Dar de alta</button>';
+  }
+
+  destino.innerHTML = h + '</div>';
+  if (modo === 'saldo') previoSaldo(i);
+  destino.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+function previoSaldo(i){
+  var x = FONDOS[i];
+  var caja = $('sPrevio'); if (!caja) return;
+  var nuevo = parseFloat($('sSaldo').value);
+  if (isNaN(nuevo)){ caja.textContent = 'Poné cuánto tenés hoy.'; return; }
+  var dif = Math.round((nuevo - x.saldo) * 100) / 100;
+  if (dif === 0){ caja.textContent = 'Es el mismo saldo que figura ahora. No se anota nada.'; return; }
+  caja.innerHTML = 'Se anota ' + (dif > 0 ? 'un <b>aporte</b> de ' : 'un <b>retiro</b> de ')
+                 + plata(Math.abs(dif), x.moneda) + ', y ' + x.fondo + ' pasa de '
+                 + plata(x.saldo, x.moneda) + ' a <b>' + plata(nuevo, x.moneda) + '</b>.';
+}
+
+function guardarSaldoFondo(i){
+  var x = FONDOS[i];
+  var v = parseFloat($('sSaldo').value);
+  if (isNaN(v)) return toast('Poné cuánto tenés hoy.');
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarFondos(); })
+    .withFailureHandler(function(e){ toast('No se pudo guardar: ' + e.message); })
+    .ajustarSaldoFondo({
+      fondo : x.fondo,
+      moneda: x.moneda,
+      cuenta: $('sCuenta').value.trim().toUpperCase(),
+      saldo : v,
+      fecha : $('sFecha').value
+    });
+}
+
+function guardarDatosFondo(i){
+  var x = FONDOS[i];
+  var nombre = $('dFondo').value.trim();
+  if (!nombre) return toast('El fondo necesita un nombre.');
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarFondos(); })
+    .withFailureHandler(function(e){ toast('No se pudo guardar: ' + e.message); })
+    .renombrarFondo({
+      fondo      : x.fondo,
+      moneda     : x.moneda,
+      fondoNuevo : nombre,
+      cuentaNueva: $('dCuenta').value.trim()
+    });
+}
+
+function guardarFondoNuevo(){
+  var nombre = $('nFondo').value.trim();
+  if (!nombre) return toast('Falta el nombre del fondo.');
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarFondos(); })
+    .withFailureHandler(function(e){ toast('No se pudo crear: ' + e.message); })
+    .crearFondo({
+      fondo : nombre,
+      saldo : $('nSaldo').value,
+      moneda: $('nMonedaF').value,
+      cuenta: $('nCuentaF').value.trim(),
+      fecha : $('nFechaF').value
+    });
+}
+
+// ══ GASTOS E INGRESOS FIJOS ═══════════════════════════════════
+// Una actualización de precio no pisa el importe viejo: cierra el
+// compromiso que termina y abre uno nuevo desde el mes del aumento,
+// para que los meses ya pasados conserven lo que de verdad se pagó.
+var FIJOS = null;
+
+function cargarFijos(){
+  $('fijosGastos').innerHTML = '<div class="card"><div class="cargando">Cargando…</div></div>';
+  $('fijosIngresos').innerHTML = '';
+  servidor()
+    .withSuccessHandler(function(f){ FIJOS = f; pintarFijos(); })
+    .withFailureHandler(function(e){
+      $('fijosGastos').innerHTML = '<div class="card"><div class="aviso alerta">No pude leer los fijos: ' + e.message + '</div></div>';
+    })
+    .getRecurrentes();
+}
+
+function mesISOactual(){
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+
+function estadoFijo(x){
+  if (!x.fin) return '<span class="pos">vigente</span>';
+  var f = new Date(x.fin + 'T00:00:00');
+  var i = x.inicio ? new Date(x.inicio + 'T00:00:00') : null;
+  var txt = f.toLocaleDateString('es-AR');
+  // Fin antes del inicio: la fila existe pero no proyecta un solo mes.
+  if (i && f < i) return '<span class="neg">sin efecto: termina el ' + txt
+                       + ', antes de empezar</span>';
+  return f < new Date() ? '<span class="suave">terminó el ' + txt + '</span>'
+                        : '<span class="ojo">hasta el ' + txt + '</span>';
+}
+
+function bloqueFijos(titulo, lista, tipo){
+  if (!lista.length) return '<div class="card"><h2>' + titulo + '</h2><div class="vacio">No hay nada cargado.</div></div>';
+  var h = '<div class="card"><h2>' + titulo + '</h2>';
+  lista.forEach(function(x){
+    var vigente = !x.fin || new Date(x.fin + 'T00:00:00') >= new Date();
+    h += '<div class="item' + (vigente ? '' : ' viejo') + '">'
+       + '<div class="t"><span>' + x.concepto
+       +   (x.compartido ? '<span class="chip" style="color:var(--acento)">compartido</span>' : '')
+       +   (tipo === 'INGRESO' && String(x.categoria).toUpperCase() === 'SUELDO' ? '<span class="chip" style="color:var(--verde)">sueldo</span>' : '')
+       +   '</span>'
+       +   '<span>' + plata(x.importe, x.moneda) + '</span></div>'
+       + '<div class="d">' + x.periodicidad.toLowerCase() + ' · día ' + (x.dia || 1)
+       +   (x.cuenta ? ' · ' + x.cuenta : '') + ' · ' + estadoFijo(x) + '</div>';
+    if (vigente){
+      h += '<div class="acciones">'
+         + '<button class="sec" onclick="abrirPanel(\'' + tipo + '\',\'' + x.id + '\',\'precio\')">Actualizó el precio</button>'
+         + '<button class="sec" onclick="abrirPanel(\'' + tipo + '\',\'' + x.id + '\',\'baja\')">Dar de baja</button>'
+         + '</div>';
+      if (tipo === 'GASTO')
+        h += '<button class="sec" style="margin-top:6px" onclick="cambiarAlcance(\'' + x.id + '\',' + !x.compartido + ',this)">'
+           + (x.compartido ? 'Pasar a solo mío' : 'Pasar a compartido') + '</button>';
+      h += '<div id="panel-' + x.id + '"></div>';
+    }
+    h += '</div>';
+  });
+  h += '<button class="sec" onclick="abrirPanel(\'' + tipo + '\',\'\',\'nuevo\')" style="margin-top:14px">+ Agregar uno nuevo</button>'
+     + '<div id="panel-nuevo-' + tipo + '"></div></div>';
+  return h;
+}
+
+function pintarFijos(){
+  var p = FIJOS.porcentajes, rep;
+  if (p.faltan.length){
+    rep = '<div class="card"><div class="aviso ojito">Para repartir lo compartido falta el sueldo de <b>'
+        + p.faltan.map(nombrePersona).join(' y ') + '</b>. Cargalo abajo, en Ingresos fijos, como <b>sueldo</b>. '
+        + 'Mientras tanto va 50 y 50.</div></div>';
+  } else {
+    rep = '<div class="card"><h2>Cómo se reparte lo compartido en ' + p.mes + '</h2>'
+        + lin('Iván', 'cobra ' + plata(p.sueldoIvan), pct(p.ivan))
+        + lin('Lucía', 'cobra ' + plata(p.sueldoLucia), pct(p.lucia))
+        + '<p class="sub" style="margin:10px 0 0">Sale de los sueldos de cada uno. Cuando alguno cambia, '
+        + 'cargalo con «Actualizó el precio» y el reparto se ajusta desde ese mes.</p></div>';
+  }
+  $('fijosGastos').innerHTML   = rep + bloqueFijos('Gastos fijos',   FIJOS.gastos,   'GASTO');
+  $('fijosIngresos').innerHTML = bloqueFijos('Mis ingresos fijos', FIJOS.ingresos, 'INGRESO');
+}
+
+function cambiarAlcance(id, compartido, b){
+  b.disabled = true;
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarFijos(); cargarResumen(); })
+    .withFailureHandler(function(e){ b.disabled = false; toast('No se pudo: ' + e.message); })
+    .cambiarAlcanceRecurrente(id, compartido);
+}
+
+function buscarFijo(tipo, id){
+  var lista = tipo === 'INGRESO' ? FIJOS.ingresos : FIJOS.gastos;
+  for (var i = 0; i < lista.length; i++) if (lista[i].id === id) return lista[i];
+  return null;
+}
+
+function abrirPanel(tipo, id, modo){
+  var destino = id ? $('panel-' + id) : $('panel-nuevo-' + tipo);
+  if (destino.innerHTML){ destino.innerHTML = ''; return; }
+  document.querySelectorAll('[id^=panel-]').forEach(function(p){ p.innerHTML = ''; });
+
+  var x = id ? buscarFijo(tipo, id) : null;
+  var h = '<div class="panel">';
+
+  if (modo === 'precio'){
+    // "Rige desde" sirve también para un aumento que ya sabemos pero que
+    // todavía no llegó: se carga hoy con el mes que corresponde y la app
+    // deja el importe viejo hasta el mes anterior.
+    h += '<div class="fila2">'
+       +   '<div><label>Nuevo importe</label>'
+       +     '<input type="number" inputmode="decimal" step="0.01" id="fImporte" value="' + x.importe
+       +     '" oninput="previoPrecio(\'' + tipo + '\',\'' + id + '\')"></div>'
+       +   '<div><label>Rige desde</label>'
+       +     '<input type="month" id="fDesde" value="' + mesISOactual()
+       +     '" onchange="previoPrecio(\'' + tipo + '\',\'' + id + '\')"></div>'
+       + '</div>'
+       + '<div class="aviso" id="fPrevio"></div>'
+       + '<button onclick="guardarPrecio(\'' + tipo + '\',\'' + id + '\')">Guardar la actualización</button>';
+
+  } else if (modo === 'baja'){
+    h += '<label>Último mes que se paga</label>'
+       + '<input type="date" id="fFin" value="' + hoyISO() + '">'
+       + '<div class="aviso">Se carga la fecha de fin y listo. No se borra nada de lo ya proyectado.</div>'
+       + '<button onclick="guardarBaja(\'' + tipo + '\',\'' + id + '\')">Dar de baja</button>';
+
+  } else {
+    h += '<label>Concepto</label><input id="nConcepto" placeholder="Futsal">'
+       + '<div class="fila2"><div><label>Importe</label>'
+       +   '<input type="number" inputmode="decimal" step="0.01" id="nImporte" placeholder="0,00"></div>'
+       +   '<div><label>Día del mes</label><input type="number" inputmode="numeric" min="1" max="31" id="nDia" value="1"></div></div>'
+       + '<label>Arranca en</label><input type="month" id="nDesde" value="' + mesISOactual() + '">';
+    if (tipo === 'GASTO'){
+      h += '<div class="fila2"><div><label>Medio de pago</label>'
+         +   '<select id="nMedio" onchange="pintarCuentaFijo()">'
+         +     '<option>EFECTIVO</option><option>DÉBITO</option>'
+         +     '<option>TRANSFERENCIA</option><option>TARJETA DE CRÉDITO</option></select></div>'
+         +   '<div><label>Moneda</label><select id="nMoneda"><option>ARS</option><option>USD</option></select></div></div>'
+         + '<div id="nCuentaCaja"></div>'
+         + '<label>¿De quién es?</label><select id="nDeQuien">'
+         +   '<option value="' + YO + '">Mío</option><option value="COMPARTIDO">Compartido (se paga desde Casa)</option></select>';
+    } else {
+      h += '<label>Tipo</label><select id="nTipoIng"><option value="SUELDO">Sueldo</option><option value="EXTRA">Extra</option></select>'
+         + '<label>Cuenta destino</label><input id="nCuenta" placeholder="BRUBANK (DÉBITO)">';
+    }
+    h += '<button onclick="guardarNuevo(\'' + tipo + '\')">Dar de alta</button>';
+  }
+
+  destino.innerHTML = h + '</div>';
+  if (modo === 'precio') previoPrecio(tipo, id);
+  if (modo === 'nuevo' && tipo === 'GASTO') pintarCuentaFijo();
+  destino.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+// Con tarjeta de crédito no tiene sentido escribir el nombre a mano:
+// se elige de las tarjetas cargadas, así coincide con el calendario.
+function pintarCuentaFijo(){
+  var caja = $('nCuentaCaja'); if (!caja) return;
+  var esTarjeta = $('nMedio').value === 'TARJETA DE CRÉDITO';
+  var previo = $('nCuenta') ? $('nCuenta').value : '';
+
+  if (esTarjeta && TARJETAS.length){
+    caja.innerHTML = '<label>Tarjeta</label><select id="nCuenta">'
+      + TARJETAS.map(function(t){
+          return '<option' + (t.nombre === previo ? ' selected' : '') + '>' + t.nombre + '</option>';
+        }).join('')
+      + '</select>'
+      + '<div class="aviso">La primera cuota cae un mes después, igual que en el resumen real.</div>';
+  } else {
+    caja.innerHTML = '<label>Cuenta o tarjeta</label>'
+      + '<input id="nCuenta" placeholder="BRUBANK (DÉBITO)" value="'
+      + (esTarjeta ? '' : previo.split('"').join('&quot;')) + '">'
+      + (esTarjeta ? '<div class="aviso alerta">No hay tarjetas cargadas en la planilla.</div>' : '');
+  }
+}
+
+function trasGuardar(r, b, txt){
+  b.disabled = false; b.textContent = txt;
+  toast(r.mensaje);
+  if (r.ok){ cargarFijos(); cargarResumen(); }
+}
+
+// Dice en castellano qué va a pasar, antes de tocar nada.
+function previoPrecio(tipo, id){
+  var caja = $('fPrevio'); if (!caja) return;
+  var x = buscarFijo(tipo, id);
+  var nuevo = parseFloat($('fImporte').value);
+  var desdeISO = $('fDesde').value;
+  if (!x || !desdeISO || !nuevo){ caja.textContent = 'Poné el importe nuevo y desde qué mes rige.'; return; }
+
+  var desde  = new Date(desdeISO + '-01T00:00:00');
+  var previo = new Date(desde.getFullYear(), desde.getMonth() - 1, 1);
+  var inicio = x.inicio ? new Date(x.inicio + 'T00:00:00') : null;
+
+  if (inicio && inicio >= desde){
+    caja.innerHTML = '<b>' + x.concepto + '</b> todavía no arrancó (empieza en <b>'
+      + nombreDeMesISO(x.inicio.slice(0,7)) + '</b>), así que le cambio el importe a '
+      + plata(nuevo, x.moneda) + ' en el mismo compromiso. No se duplica nada.';
+    return;
+  }
+  if (x.fin && new Date(x.fin + 'T00:00:00') < desde){
+    caja.innerHTML = '<b>Ojo:</b> ' + x.concepto + ' termina antes de '
+      + nombreDeMesISO(desdeISO) + '. Sacale la fecha de fin primero.';
+    return;
+  }
+  var previoISO = previo.getFullYear() + '-' + String(previo.getMonth()+1).padStart(2,'0');
+  caja.innerHTML = 'Hasta <b>' + nombreDeMesISO(previoISO) + '</b> sigue en '
+      + plata(x.importe, x.moneda) + '. Desde <b>' + nombreDeMesISO(desdeISO) + '</b> pasa a <b>'
+      + plata(nuevo, x.moneda) + '</b>. Los meses ya pasados no se tocan.';
+}
+
+function guardarPrecio(tipo, id){
+  var b = event.target, txt = b.textContent;
+  if (!parseFloat($('fImporte').value)) return toast('Falta el importe.');
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){ trasGuardar(r, b, txt); })
+    .withFailureHandler(function(e){ b.disabled = false; b.textContent = txt; toast('No se pudo: ' + e.message); })
+    .actualizarImporteRecurrente({ tipo: tipo, id: id,
+      importe: $('fImporte').value, desde: $('fDesde').value + '-01' });
+}
+
+function guardarBaja(tipo, id){
+  var b = event.target, txt = b.textContent;
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){ trasGuardar(r, b, txt); })
+    .withFailureHandler(function(e){ b.disabled = false; b.textContent = txt; toast('No se pudo: ' + e.message); })
+    .darDeBajaRecurrente({ tipo: tipo, id: id, fechaFin: $('fFin').value });
+}
+
+function guardarNuevo(tipo){
+  var b = event.target, txt = b.textContent;
+  if (!$('nConcepto').value.trim()) return toast('Falta el concepto.');
+  if (!parseFloat($('nImporte').value)) return toast('Falta el importe.');
+  b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){ trasGuardar(r, b, txt); })
+    .withFailureHandler(function(e){ b.disabled = false; b.textContent = txt; toast('No se pudo: ' + e.message); })
+    .crearRecurrente({
+      tipo: tipo, concepto: $('nConcepto').value.trim(), importe: $('nImporte').value,
+      dia: $('nDia').value, desde: $('nDesde').value + '-01',
+      medio:  $('nMedio')  ? $('nMedio').value  : '',
+      moneda: $('nMoneda') ? $('nMoneda').value : 'ARS',
+      cuenta: $('nCuenta') ? $('nCuenta').value.trim() : '',
+      deQuien: $('nDeQuien') ? $('nDeQuien').value : '',
+      categoria: $('nTipoIng') ? $('nTipoIng').value : ''
+    });
+}
+
+// ── Últimas compras ──
+function cargarUltimas(){
+  $('ultimasBody').innerHTML = '<div class="cargando">Cargando…</div>';
+  servidor().withSuccessHandler(function(cs){
+    if (!cs.length){ $('ultimasBody').innerHTML = '<div class="vacio">Todavía no hay compras.</div>'; return; }
+    $('ultimasBody').innerHTML = cs.map(function(c){
+      var anul = c.estado === 'ANULADA';
+      var tag = c.deQuien === 'COMPARTIDO' ? '<span class="chip" style="color:var(--acento)">compartido</span>'
+              : (c.deQuien !== YO ? '<span class="chip">de ' + nombrePersona(c.deQuien) + '</span>' : '');
+      return '<div class="item' + (anul ? ' anulada' : '') + '">'
+        + '<div class="t"><span>' + c.descripcion + tag + '</span><span>' + plata(c.importe, c.moneda) + '</span></div>'
+        + '<div class="d">' + c.fecha + ' · ' + c.tarjeta
+        + (c.cuotas > 1 ? ' · ' + c.cuotas + ' cuotas de ' + plata(c.porCuota, c.moneda) : ' · 1 pago')
+        + ' · desde ' + c.primera + '</div>'
+        + (anul ? '' : '<button class="sec" onclick="anular(\'' + c.id + '\')">Anular</button>')
+        + '</div>';
+    }).join('');
+  }).getUltimasCompras(12);
+}
+
+function anular(id){
+  servidor().withSuccessHandler(function(r){
+    toast(r.mensaje); cargarUltimas(); cargarResumen();
+  }).anularCompra(id);
+}
+
+// ══ ACCESO ════════════════════════════════════════════════════
+// Mail y contraseña propios de la app (ver Acceso.js). El token queda
+// guardado en el celular para no tener que entrar cada vez.
+function leerToken(){ try { return localStorage.getItem('mf_token'); } catch(e){ return null; } }
+function guardarToken(t){ try { t ? localStorage.setItem('mf_token', t) : localStorage.removeItem('mf_token'); } catch(e){} }
+var PRIMERA_VEZ = false;
+var YO = 'IVÁN';   // persona de quien entró (la confirma quienSoy al arrancar)
+
+function pedirLogin(aviso){
+  guardarToken(null);
+  document.body.classList.add('sinSesion');
+  $('login').classList.remove('oculto');
+  modoPrimeraVez(false);
+  $('lAviso').className = aviso ? 'aviso' : 'aviso oculto';
+  $('lAviso').textContent = aviso || '';
+}
+
+function modoPrimeraVez(si){
+  PRIMERA_VEZ = si;
+  $('lRepetirCaja').classList.toggle('oculto', !si);
+  $('lClave').autocomplete = si ? 'new-password' : 'current-password';
+  $('lBoton').textContent = si ? 'Crear contraseña y entrar' : 'Entrar';
+}
+
+function trasEntrar(r){
+  if (r && r.primeraVez){
+    modoPrimeraVez(true);
+    $('lAviso').className = 'aviso';
+    $('lAviso').innerHTML = '<b>Primera vez.</b> Elegí una contraseña (mínimo 6 caracteres) y repetila abajo.';
+    $('lClave2').focus();
+    return;
+  }
+  guardarToken(r.token);
+  $('lClave').value = ''; $('lClave2').value = '';
+  arrancar();
+}
+
+$('fLogin').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var mail = $('lMail').value.trim(), clave = $('lClave').value;
+  if (!mail || !clave) return toast('Completá el mail y la contraseña.');
+  if (PRIMERA_VEZ && clave !== $('lClave2').value) return toast('Las dos contraseñas no coinciden.');
+  var b = $('lBoton'), txt = b.textContent;
+  b.disabled = true; b.textContent = 'Entrando…';
+  servidor()
+    .withSuccessHandler(function(r){ b.disabled = false; b.textContent = txt; trasEntrar(r); })
+    .withFailureHandler(function(e){
+      b.disabled = false; b.textContent = txt;
+      $('lAviso').className = 'aviso alerta'; $('lAviso').textContent = e.message;
+    })[PRIMERA_VEZ ? 'crearClave' : 'entrar'](mail, clave);
+});
+
+function cerrarSesion(){
+  servidor().salir(leerToken());
+  pedirLogin('Saliste. Hasta la próxima.');
+}
+
+// ══ LA PUERTA AL SERVIDOR ═════════════════════════════════════
+// La pantalla puede vivir en dos lugares:
+//   · en GitHub Pages (la app instalable): habla con el servidor por
+//     fetch SIN cookies de Google, así no hay /u/3/ ni cuenta equivocada;
+//   · en el link viejo de script.google.com: usa google.script.run.
+// Las dos terminan en api() (o en entrar/crearClave/salir) de Acceso.js.
+var API = 'https://script.google.com/macros/s/AKfycbwtrkhHgaj0NSuAYKI57UKXVWFXGeRWRL6FOIf4CJxQfmsxc7wDoQa7qnvhOFS9FR82IQ/exec';
+var SIN_SESION = ['entrar', 'crearClave', 'salir'];
+var EN_APPS_SCRIPT = !!(window.google && google.script && google.script.run);
+
+function limpiarError(e){
+  var m = String((e && e.message) || e || 'Error desconocido').replace(/^Error:\s*/, '');
+  return new Error(m);
+}
+
+function llamar(nombre, args, ok, mal){
+  var fallo = function(e){
+    e = limpiarError(e);
+    if (e.message.indexOf('SESION_VENCIDA') >= 0) return pedirLogin('Tu sesión venció. Entrá de nuevo.');
+    mal(e);
+  };
+  var libre = SIN_SESION.indexOf(nombre) >= 0;
+  if (EN_APPS_SCRIPT){
+    var run = google.script.run.withSuccessHandler(ok).withFailureHandler(fallo);
+    if (libre) run[nombre].apply(run, args); else run.api(leerToken(), nombre, args);
+    return;
+  }
+  fetch(API, {
+    method: 'POST', credentials: 'omit', redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // sin preflight CORS
+    body: JSON.stringify({ f: nombre, token: libre ? null : leerToken(), args: args })
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(j){ j.ok ? ok(j.r) : fallo(new Error(j.error)); })
+    .catch(function(){ fallo(new Error('No pude conectar con la planilla. Revisá la conexión y probá de nuevo.')); });
+}
+
+/**
+ * Misma forma de uso que google.script.run:
+ * servidor().withSuccessHandler(f).withFailureHandler(g).getFondos()
+ */
+function servidor(){
+  var ok = function(){}, mal = function(e){ toast('No se pudo: ' + e.message); };
+  var base = {
+    withSuccessHandler: function(f){ ok = f; return prox; },
+    withFailureHandler: function(f){ mal = f; return prox; }
+  };
+  var prox = new Proxy(base, { get: function(t, nombre){
+    if (nombre in t) return t[nombre];
+    return function(){ llamar(nombre, Array.prototype.slice.call(arguments), ok, mal); };
+  }});
+  return prox;
+}
+
+function arrancar(){
+  document.body.classList.remove('sinSesion');
+  $('login').classList.add('oculto');
+  servidor().withSuccessHandler(function(s){
+    YO = s.persona;
+    opcionesDeQuien();
+    $('quien').innerHTML = nombrePersona(s.persona)
+      + ' · <a href="#" onclick="cerrarSesion();return false" style="color:var(--acento)">Salir</a>';
+  }).quienSoy();
+  opcionesDeQuien();
+  ir('inicio');
+  cargarTarjetas();
+  cargarConfig(function(){ cargarMesesResumen(); });   // el Resumen se lee recién al entrar
+}
+
+// ── Arranque ──
+$('cFecha').value = hoyISO();
+$('mFecha').value = hoyISO();
+$('aFecha').value = hoyISO();
+if (leerToken()) arrancar(); else pedirLogin();
 </script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});</script>
 </body>
 </html>

@@ -617,10 +617,16 @@ function pintarResumen(m){
   h += '<div class="card"><h2>Casa en ' + m.mesEtiqueta + '</h2>'
      + lin('Pone Iván', '', plata(vc.aportes['IVÁN'])) + lin('Pone Lucía', '', plata(vc.aportes['LUCÍA']))
      + '<div class="grupoRep">Casa paga</div>';
-  vc.paga.forEach(function(x){
+  vc.paga.forEach(function(x, i){
     var sub = x.tipo === 'TARJETA' ? (x.vence ? 'vence ' + x.vence : 'resumen de la tarjeta')
             : (x.tipo === 'FIJO' ? 'fijo compartido' + (x.dia ? ' · día ' + x.dia : '') : 'previsto compartido');
-    h += lin(x.nombre, sub, x.ars ? plata(x.ars) : plata(x.usd, 'USD'), x.ars && x.usd ? usdTxt(x.usd) : '');
+    var nom = x.nombre + (x.conciliado ? '<span class="chip" style="color:var(--verde)">conciliado</span>' : '');
+    h += lin(nom, sub, x.ars ? plata(x.ars) : plata(x.usd, 'USD'), x.ars && x.usd ? usdTxt(x.usd) : '');
+    // Conciliar: solo el titular, con el resumen real en la mano.
+    if (x.tipo === 'TARJETA' && x.titular === YO)
+      h += '<button class="sec" style="margin:2px 0 6px" onclick="panelConciliar(' + i + ')">'
+         + (x.conciliado ? 'Volver a conciliar con el resumen' : 'Conciliar con el resumen') + '</button>'
+         + '<div id="conc-' + i + '"></div>';
   });
   h += '<div class="subtot"><span>Total (dólares al oficial)</span><span>' + plata(vc.total) + '</span></div>'
      + '<p class="sub" style="margin:10px 0 0">Con lo que está guardado. Si los dos ponen lo suyo, Casa queda en cero.</p></div>';
@@ -632,6 +638,52 @@ function pintarResumen(m){
   pl.servicios.forEach(function(s){ if (s.etiqueta || s.importe) agregarPrevisto('prevMios', s); });
   if (!$('prevMios').children.length) agregarPrevisto('prevMios');
   recalcularReparto();
+}
+
+// ══ CONCILIAR UN RESUMEN ══════════════════════════════════════
+// Con el PDF del banco en la mano: total real en pesos y en dólares.
+// La diferencia con lo cargado (impuestos, percepciones, sellos…) queda
+// como «Impuestos y ajustes del resumen» en esa tarjeta y ese mes.
+function panelConciliar(i){
+  var x = MES_DATA.vistaCasa.paga[i], caja = $('conc-' + i);
+  if (caja.innerHTML){ caja.innerHTML = ''; return; }
+  var s = x.sinAjuste;
+  caja.innerHTML = '<div class="panel">'
+    + '<div style="font-size:13.5px">Cargado en la app (sin ajustes): <b>' + plata(s.ars) + '</b>'
+    + (s.usd ? ' + <b>' + plata(s.usd, 'USD') + '</b>' : '') + '</div>'
+    + '<div class="fila2"><div><label>Total del resumen en pesos</label>'
+    +   '<input type="number" inputmode="decimal" step="0.01" id="cRealArs-' + i + '" value="' + (x.conciliado ? x.ars : '') + '" placeholder="0,00"></div>'
+    +   '<div><label>En dólares</label>'
+    +   '<input type="number" inputmode="decimal" step="0.01" id="cRealUsd-' + i + '" value="' + (x.conciliado || s.usd ? x.usd : '') + '" placeholder="0,00"></div></div>'
+    + '<div class="aviso" id="cDif-' + i + '">Poné el total que dice el resumen del banco.</div>'
+    + '<button onclick="guardarConciliacion(' + i + ', this)">Guardar el ajuste</button></div>';
+  ['cRealArs-', 'cRealUsd-'].forEach(function(p){
+    $(p + i).addEventListener('input', function(){ difConciliar(i); });
+  });
+  difConciliar(i);
+  $('cRealArs-' + i).focus();
+}
+
+function difConciliar(i){
+  var x = MES_DATA.vistaCasa.paga[i], s = x.sinAjuste;
+  var a = $('cRealArs-' + i).value, u = $('cRealUsd-' + i).value;
+  if (a === '') { $('cDif-' + i).textContent = 'Poné el total que dice el resumen del banco.'; return; }
+  var da = Math.round(((parseFloat(a) || 0) - s.ars) * 100) / 100;
+  var du = Math.round(((parseFloat(u) || 0) - s.usd) * 100) / 100;
+  var txt = function(d, m){ return (d >= 0 ? '+ ' : '− ') + plata(Math.abs(d), m); };
+  $('cDif-' + i).innerHTML = 'Diferencia: <b>' + txt(da) + '</b>' + (du ? ' y <b>' + txt(du, 'USD') + '</b>' : '')
+    + '. Se guarda como «Impuestos y ajustes del resumen» de ' + MES_DATA.mesEtiqueta + '.';
+}
+
+function guardarConciliacion(i, b){
+  var x = MES_DATA.vistaCasa.paga[i];
+  var a = $('cRealArs-' + i).value;
+  if (a === '') return toast('Falta el total en pesos.');
+  var txt = b.textContent; b.disabled = true; b.textContent = 'Guardando…';
+  servidor()
+    .withSuccessHandler(function(r){ toast(r.mensaje); cargarResumen(MES_VISTA); })
+    .withFailureHandler(function(e){ b.disabled = false; b.textContent = txt; toast('No se pudo: ' + e.message); })
+    .conciliarResumen(x.nombre, MES_VISTA, parseFloat(a) || 0, parseFloat($('cRealUsd-' + i).value) || 0);
 }
 
 /** Un renglón editable de gasto previsto. El botón lo pasa de mío a compartido y al revés. */
